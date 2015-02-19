@@ -51,14 +51,6 @@ describe("Testing NoInfoPath Helpers module", function(){
 			expect(p).toEqual({test: '1', foo: 'bar'});
 		});
 
-		it("warning: the next test is fringe case, which should never happen.")
-		it("duplicate query string param test should return {foo: 'bar'}", function(){
-			$window.location.search = "?foo=1&foo=bar";
-			var p = noUrl.params();
-			//console.log(p);
-			expect(p).toEqual({foo: 'bar'});
-		});
-
 		it("query param without an equal sign should return {test: '1', foo: true}", function(){
 			$window.location.search = "?test=1&foo";
 			var p = noUrl.params();
@@ -72,6 +64,16 @@ describe("Testing NoInfoPath Helpers module", function(){
 			console.log(p);
 			expect(p).toEqual({test: '', foo: 'bar'});
 		});
+
+		describe("warning: the next test is fringe case, which should never happen.", function(){
+			it("duplicate query string param test should return {foo: 'bar'}", function(){
+				$window.location.search = "?foo=1&foo=bar";
+				var p = noUrl.params();
+				//console.log(p);
+				expect(p).toEqual({foo: 'bar'});
+			});
+		})
+
 
 	})
 })

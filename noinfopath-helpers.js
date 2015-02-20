@@ -28,6 +28,11 @@
 			}
 		}])
 
+		/**
+		 * @service
+		 * @name  noXml
+		 * @description normalized the XmlDOM and provides parsing and conversion methods.
+		 */
 		.service("noXml",[function(){
 			var parser,
 				SELF = this;
@@ -51,12 +56,34 @@
 				}
 			} 
 
+			/**
+			 * @method
+			 * @name  fromString
+			 * fromString takes in an xml string and parses it using
+			 * the normalized DOMParser created when the service
+			 * is instanciated.
+			 * @param  {string} xml a string containing a valid xml document
+			 * @return {object} XmlDOM object 
+			 */
 			this.fromString = function(xml){
 			 	var xmlDoc = parser.parseFromString(xml,"text/xml");
 			 	return xmlDoc
 			};
 
-			this.toObject = function(node){
+			/**
+			 * @method
+			 * @name  toObject
+			 * @description Converts an XmlNode to a JavaScript object.
+			 * @param  {object} node XmlNode object.
+			 * @param  {string} target the name of an element start at.
+			 * @return {object} a JavaScript object.
+			 */
+			this.toObject = function(node, target){
+				if(target){
+					var nodes = node.getElementsByTagName(target);
+					node = nodes[0];
+				}
+
 				//console.log(angular.toJson(node.firstChild));
 				// Create the return object
 				var obj = {
@@ -91,7 +118,6 @@
 						});
 					}else{
 						obj.value = node.textContent;
-						
 					}
 
 

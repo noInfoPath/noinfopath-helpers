@@ -134,10 +134,10 @@ describe("Testing NoInfoPath Helpers module", function(){
 		it("given a SOAP response should return a JavaScript object", function(){
 			var response = '<?xml version="1.0" encoding="UTF-8"?><soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soap:Body><AlterToDoResponse xmlns="http://schemas.microsoft.com/sharepoint/soap/workflow/"><AlterToDoResult><fSuccess>1</fSuccess></AlterToDoResult></AlterToDoResponse></soap:Body></soap:Envelope>',
 				dom = noXml.fromString(response),
-				obj = noXml.toObject(dom.firstChild),
-				expected = {"name":"soap:Envelope","value":null,"attributes":{"0":"http://www.w3.org/2003/05/soap-envelope","1":"http://www.w3.org/2001/XMLSchema","2":"http://www.w3.org/2001/XMLSchema-instance"},"children":[{"name":"soap:Body","value":null,"attributes":{},"children":[{"name":"AlterToDoResponse","value":null,"attributes":{"0":"http://schemas.microsoft.com/sharepoint/soap/workflow/"},"children":[{"name":"AlterToDoResult","value":null,"attributes":{},"children":[{"name":"fSuccess","value":"1","attributes":{},"children":[]}]}]}]}]};
+				obj = noXml.toObject(dom.firstChild, "AlterToDoResult"),
+				expected = {"name":"AlterToDoResult","value":null,"attributes":{},"children":[{"name":"fSuccess","value":"1","attributes":{},"children":[]}]};
 
-			//console.log("\n\n" + angular.toJson(obj));
+			console.log("\n\n" + angular.toJson(obj));
 
 			expect(obj).toBeDefined();
 			expect(obj).toEqual(expected);

@@ -6,7 +6,48 @@
 (function(angular,undefined){
 
 	angular.module('noinfopath.helpers',[])
+
 		.service("noUrl",['$window', function($window){
+
+			var r20 = /%20/g,
+				rbracket = /\[\]$/,
+				rCRLF = /\r?\n/g,
+				rsubmitterTypes = /^(?:submit|button|image|reset|file)$/i,
+				rsubmittable = /^(?:input|select|textarea|keygen)/i;
+
+			function buildParams( prefix, obj, traditional, add ) {
+				var name;
+
+				if ( angular.isArray( obj ) ) {
+					// Serialize array item.
+					angular.forEach( obj, function( i, v ) {
+						if ( traditional || rbracket.test( prefix ) ) {
+							// Treat each array item as a scalar.
+							add( prefix, v );
+
+						} else {
+							// Item is non-scalar (array or object), encode its numeric index.
+							buildParams(
+								prefix + "[" + (angular.isObject(v) ? i : "" ) + "]",
+								v,
+								traditional,
+								add
+							);
+						}
+					});
+
+				} else if ( !traditional && angular.isObject( obj )) {
+					// Serialize object item.
+					for ( name in obj ) {
+						buildParams( prefix + "[" + name + "]", obj[ name ], traditional, add );
+					}
+
+				} else {
+					// Serialize scalar item.
+					add( prefix, obj );
+				}
+			}
+
 			this.params = function() {
 				var qs = !!$window.location.search ? $window.location.search.substr(1) : "",
 					qp = qs.split('&'),
@@ -25,7 +66,41 @@
 				})
 
 				return params;
-			}
+			};
+
+			this.serialize = function( a, traditional ) {
+console.log(a);
+				var prefix,
+					s = [],
+					add = function( key, value ) {
+						// If value is a function, invoke it and return its value
+						value = angular.isFunction( value ) ? value() : ( value == null ? "" : value );
+						s[ s.length ] = encodeURIComponent( key ) + "=" + encodeURIComponent( value );
+					};
+
+				// Set traditional to true for jQuery <= 1.3.2 behavior.
+				// if ( traditional === undefined ) {
+				// 	traditional = jQuery.ajaxSettings && jQuery.ajaxSettings.traditional;
+				// }
+
+				// If an array was passed in, assume that it is an array of form elements.
+				if (angular.isArray( a )) {
+					// Serialize the form elements
+					angular.forEach( a, function(value, name) {
+						add( name, value );
+					});
+
+				} else {
+					// If traditional, encode the "old" way (the way 1.3.2 or older
+					// did it), otherwise encode params recursively.
+					for ( prefix in a ) {
+						buildParams( prefix, a[ prefix ], traditional, add );
+					}
+				}
+
+				// Return the resulting serialization
+				return s.join( "&" ).replace( r20, "+" );
+			};
 		}])
 
 		/**
@@ -128,3 +203,5 @@
 		}])
 	;
 })(angular)
+
+

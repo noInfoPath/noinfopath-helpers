@@ -20,7 +20,8 @@ module.exports = function(config) {
         'node_modules/angular-mocks/angular-mocks.js',
         'test/mocks/*.*',
         'test/*.spec.js',
-        'noinfopath-helpers.js'
+        'src/noinfopath-filters.js',
+        'src/noinfopath-helpers.js'
     ],
 
 

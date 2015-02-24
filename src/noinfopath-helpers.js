@@ -202,8 +202,6 @@
 				return obj;
 			};			
 		}])
-
-
 	;
 })(angular)
 

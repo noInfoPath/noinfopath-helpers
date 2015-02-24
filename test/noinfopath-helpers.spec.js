@@ -41,7 +41,7 @@ describe("Testing NoInfoPath Helpers module", function(){
 			it("single query string param test should return {test: 1}", function(){
 				$window.location.search = "?test=1";
 				var p = noUrl.params();
-				// console.log(p);
+				console.log(p);
 				expect(p).toEqual({test: '1'});
 			});
 

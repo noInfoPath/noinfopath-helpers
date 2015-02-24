@@ -7,7 +7,7 @@
 
 	angular.module('noinfopath.helpers',[])
 
-		.service("noUrl",['$window', function($window){
+		.service("noUrl",['$window', '$filter', function($window, $filter){
 
 			var r20 = /%20/g,
 				rbracket = /\[\]$/,
@@ -102,6 +102,16 @@
 				// Return the resulting serialization
 				return s.join( "&" ).replace( r20, "+" );
 			};
+
+			this.normalizeValue = function(value){
+				if(typeof value === "string"){
+					return "'" + value + "'";
+				}else if(angular.isDate(value)){
+					 return  $filter("date")(value, "DateTime'yyyy-MM-ddT0hh:mm:ss'");
+				}else{
+					return value;
+				}					
+			};			
 		}])
 
 		/**

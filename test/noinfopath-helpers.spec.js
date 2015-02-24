@@ -105,6 +105,27 @@ describe("Testing NoInfoPath Helpers module", function(){
 				expect(result).toEqual("foo=x&bar=1");
 			});
 		});
+
+		describe("noUrl.normalizeValue(value)", function(){
+			it("should exist noUrl.normalizeValue", function(){
+				expect(noUrl.normalizeValue).toBeDefined();
+			});
+
+			it("given 1 should return 1", function(){
+				expect(noUrl.normalizeValue(1)).toBeDefined(1);
+			});
+
+			it("given Test should return 'Test'", function(){
+				expect(noUrl.normalizeValue("Test")).toBeDefined("'Test'");
+			});
+
+			var testDate = new Date(2015, 2, 22, 12, 0, 0);
+			it("given a date object that represents 2015-02-22T12:00:00, \n\t should return DateTime'2015-02-22T12:00:00'", function(){
+			 	var result = noUrl.normalizeValue(testDate);
+				expect(result).toBeDefined("DateTime'2015-02-22T12:00:00'");
+			});
+		});
+
 	})
 
 	describe("Testing noXml service", function(){

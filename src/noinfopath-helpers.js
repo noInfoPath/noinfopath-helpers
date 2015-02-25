@@ -1,5 +1,5 @@
 /**
- * #noinfopath-helpers@0.0.5
+ * #noinfopath-helpers@0.0.8
  * NoInfoPath Helpers
  */
 

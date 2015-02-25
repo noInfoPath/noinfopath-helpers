@@ -1,6 +1,6 @@
 {
   "name": "noinfopath-helpers",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "noinfopath url helpers module",
   "main": "noinfopath-urlhelpers.js",
   "scripts": {

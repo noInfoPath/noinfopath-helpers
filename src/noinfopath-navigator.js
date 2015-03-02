@@ -31,7 +31,7 @@ var noGeoMock;
 
 			_mock.getCurrentPosition =	function(successCallback, errorCallback, options){ 
 				if(!successCallback){ throw "successCallback is required"; } 
-				$timeout(successCallback(_positionFake),1);
+				successCallback(_positionFake);
 			};
 			
 			_mock.watchPosition = function(successCallback, errorCallback, options){ return 1;};
@@ -40,7 +40,7 @@ var noGeoMock;
 	
    			_service.getCurrentPosition = function(options){
    				var deferred = $q.defer();
-   				$timeout(_geo.getCurrentPosition(deferred.resolve, deferred.reject, options),1);
+   				_geo.getCurrentPosition(deferred.resolve, deferred.reject, options);
    				return deferred.promise;
    			};	
 

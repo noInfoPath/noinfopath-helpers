@@ -1,4 +1,4 @@
-//noinfopath-navigator@0.0.9
+//noinfopath-navigator@0.0.10
 var noGeoMock;
 (function(angular,undefined){
 	"use strict";

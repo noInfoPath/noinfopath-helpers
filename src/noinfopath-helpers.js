@@ -1,5 +1,5 @@
 /**
- * #noinfopath-helpers@0.0.8
+ * #noinfopath-helpers@0.0.9
  * NoInfoPath Helpers
  */
 
@@ -67,8 +67,6 @@
 
 				return params;
 			};
-
-
 
 			this.serialize = function( a, traditional ) {
 				var prefix,

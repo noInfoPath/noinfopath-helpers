@@ -21,7 +21,8 @@ module.exports = function(config) {
         'test/mocks/*.*',
         'test/*.spec.js',
         'src/noinfopath-filters.js',
-        'src/noinfopath-helpers.js'
+        'src/noinfopath-helpers.js',
+        'src/noinfopath-navigator.js'       
     ],
 
 

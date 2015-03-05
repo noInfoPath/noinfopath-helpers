@@ -1,22 +1,44 @@
+###NoInfoPath -- Helpers Module
+Contains various services uses by other NoInfoPath modules
+ - Current Version: 0.0.1
+ - Module Name: noinfopath.google
+ - Current Version: 0.0.11
+ 
+##Installation
+    npm install noinfopath-helpers --save
 
+##Dependencies
+None
 
-<!-- Start noinfopath-sharepoint.js -->
+##Directives
+None
 
-#noinfopath-sharepoint
-NoInfoPath SharePoint REST API
+##Controllers
+None
 
-## makeResourceUrl(service, listname)
+##Services
 
-#makeResourceUrl
+###noGoogleMapsApi
 
-### Params:
+##Configuration
+None
 
-* **string** *service* - Name of SharePoint REST API.
-* **string** *listname* - Name of SharePoint list or library.
+####Example Controller Configuration
+None
 
-### Return:
+##Methods
+###Public
+None
 
-* **string** Returns fully qualified URL to the REST API for the list or library specified.
+###Private
+None
 
-<!-- End noinfopath-sharepoint.js -->
+##Properties
+###Public
+None
 
+###Private
+None
+
+##Events
+None

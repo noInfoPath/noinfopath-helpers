@@ -1,5 +1,5 @@
 /**
- * #noinfopath-helpers@0.0.11
+ * #noinfopath-helpers@0.0.12
  * NoInfoPath Helpers
  */
 
@@ -93,7 +93,11 @@
 					// If traditional, encode the "old" way (the way 1.3.2 or older
 					// did it), otherwise encode params recursively.
 					for ( prefix in a ) {
-						buildParams( prefix, a[ prefix ], traditional, add );
+						var param = a[ prefix ];
+						if(!angular.isFunction(param))
+						{
+							buildParams( prefix, param, traditional, add );
+						}
 					}
 				}
 

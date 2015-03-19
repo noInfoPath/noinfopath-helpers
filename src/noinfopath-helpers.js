@@ -1,5 +1,5 @@
 /**
- * #noinfopath-helpers@0.0.12
+ * #noinfopath-helpers@0.0.13
  * NoInfoPath Helpers
  */
 
@@ -190,7 +190,10 @@
 					if(node.hasAttributes()){
 						angular.forEach(node.attributes, function(val, name){
 							//console.log(name, val.textContent);
-							obj.attributes[name] = val.textContent;
+							//Using attributes for backwards compatibility for the time being
+							obj.attributes[val.name] = val.textContent;
+
+							obj[val.name] = val.textContent;
 						});
 					}
 

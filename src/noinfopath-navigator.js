@@ -1,4 +1,4 @@
-//noinfopath-navigator@0.0.13*
+//noinfopath-navigator@0.0.14
 var noGeoMock;
 (function(angular,undefined){
 	"use strict";
@@ -61,30 +61,40 @@ var noGeoMock;
 			return _service;
 		}])
 
-		.service("noStatus", ['$rootScope', '$timeout', function($rootScope, $timeout){
+		.factory("noStatus", ['$rootScope', '$timeout', function($rootScope, $timeout){
 			var _isOnTheLine = !!navigator.onLine;
-			Object.defineProperties(this,{
-				"onLine" : {
-					"get" : function(){
-						return _isOnTheLine;
+
+			function _service(){
+				Object.defineProperties(this,{
+					"onLine" : {
+						"get" : function(){
+							return _isOnTheLine;
+						}
 					}
+				});
+
+				$timeout(function() {_broadcast();}, 10);
+
+				function _broadcast(){
+					 $rootScope.$broadcast("noStatus::online", _isOnTheLine); 
 				}
-			})
+				window.addEventListener("online", function(){
+					_isOnTheLine = true;
+					_broadcast();
+				});
 
-			window.addEventListener("online", function(){
-				_isOnTheLine = true;
-				$timeout(function() { $rootScope.$broadcast("noStatus::online", _isOnTheLine); });
-			});
+				window.addEventListener("offline", function(){
+					_isOnTheLine = false;
+					_broadcast();
+				});	
+			}
 
-			window.addEventListener("offline", function(){
-				_isOnTheLine = false;
-				$timeout(function() { $rootScope.$broadcast("noStatus::online", _isOnTheLine); });
-			});			
+			return new _service();		
 		}])
 
 		.directive("noWhenOnline", ['noStatus', function(noStatus){
 			var link = function(scope, el, attr){
-				scope.$on("noStatus::online", function(){
+				scope.$root.$on("noStatus::online", function(){
 					console.warn("TODO: Enhancement");
 					switch(attr.noWhenOnline){
 						case "hide":

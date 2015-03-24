@@ -1,44 +1,44 @@
-###NoInfoPath -- Helpers Module
+### NoInfoPath -- Helpers Module
 Contains various services uses by other NoInfoPath modules
  - Current Version: 0.0.1
  - Module Name: noinfopath.google
  - Current Version: 0.0.11
  
-##Installation
+## Installation
     npm install noinfopath-helpers --save
 
-##Dependencies
+## Dependencies
 None
 
-##Directives
+## Directives
 None
 
-##Controllers
+## Controllers
 None
 
-##Services
+## Services
 
-###noGoogleMapsApi
+### noGoogleMapsApi
 
-##Configuration
+## Configuration
 None
 
-####Example Controller Configuration
+#### Example Controller Configuration
 None
 
-##Methods
-###Public
+## Methods
+### Public
 None
 
-###Private
+### Private
 None
 
-##Properties
-###Public
+## Properties
+### Public
 None
 
-###Private
+### Private
 None
 
-##Events
+## Events
 None

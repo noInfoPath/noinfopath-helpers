@@ -1,10 +1,10 @@
-//noinfopath-navigator@0.0.11
+//noinfopath-navigator@0.0.14
 var noGeoMock;
 (function(angular,undefined){
 	"use strict";
 	angular.module("noinfopath.navigator", [])
 
-		.factory("noGeo", ['$timeout','$q', function($timeout, $q){
+		.factory("noGeo", ['$timeout', '$q', function($timeout, $q){
 
 
 			var _positionFake = {
@@ -59,5 +59,64 @@ var noGeoMock;
   			};
 
 			return _service;
+		}])
+
+		.factory("noStatus", ['$rootScope', '$timeout', function($rootScope, $timeout){
+			var _isOnTheLine = !!navigator.onLine;
+
+			function _service(){
+				Object.defineProperties(this,{
+					"onLine" : {
+						"get" : function(){
+							return _isOnTheLine;
+						}
+					}
+				});
+
+				$timeout(function() {_broadcast();}, 10);
+
+				function _broadcast(){
+					 $rootScope.$broadcast("noStatus::online", _isOnTheLine); 
+				}
+				window.addEventListener("online", function(){
+					_isOnTheLine = true;
+					_broadcast();
+				});
+
+				window.addEventListener("offline", function(){
+					_isOnTheLine = false;
+					_broadcast();
+				});	
+			}
+
+			return new _service();		
+		}])
+
+		.directive("noWhenOnline", ['noStatus', function(noStatus){
+			var link = function(scope, el, attr){
+				scope.$root.$on("noStatus::online", function(){
+					console.warn("TODO: Enhancement");
+					switch(attr.noWhenOnline){
+						case "hide":
+							if( noStatus.onLine ) 
+								{ el.hide(); }
+							else
+								{ el.show(); }
+							break;
+						case "show":
+							if( noStatus.onLine ) 
+								{ el.show(); }
+							else
+								{ el.hide(); }
+							break;
+					}
+				})
+			};
+
+			var directive = {
+				restrict: "A",
+				link: link
+			}
+			return directive;
 		}])
 })(angular);

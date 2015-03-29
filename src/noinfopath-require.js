@@ -1,4 +1,4 @@
-//noinfopath-require@0.0.13
+//noinfopath-require@0.0.16
 //
 /*global angular*/
 

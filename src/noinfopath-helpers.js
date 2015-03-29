@@ -1,5 +1,5 @@
 /**
- * #noinfopath-helpers@0.0.13
+ * #noinfopath-helpers@0.0.16
  * NoInfoPath Helpers
  */
 
@@ -9,7 +9,8 @@
 
 		.service("noUrl",['$window', '$filter', function($window, $filter){
 
-			var r20 = /%20/g,
+			var SELF = this,
+				r20 = /%20/g,
 				rbracket = /\[\]$/,
 				rCRLF = /\r?\n/g,
 				rsubmitterTypes = /^(?:submit|button|image|reset|file)$/i,
@@ -113,7 +114,22 @@
 				}else{
 					return value;
 				}					
-			};			
+			};		
+
+			this.makeResourceUrl = function(endPointUri, listName, query){
+				var qs = query ? "?" + query : "";
+				return endPointUri + "/" + listName + qs;
+			};
+				
+			this.makeResourceUrls = function(endPointUri, resources){
+				var urls = {};
+				angular.forEach(resources, function(resource){
+					var url = SELF.makeResourceUrl(endPointUri, resource.TableName, resource.Query);
+					urls[resource.TableName] = url;
+				});				
+
+				return urls;
+			};				
 		}])
 
 		/**

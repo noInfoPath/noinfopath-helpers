@@ -1,4 +1,4 @@
-//noinfopath-filters@0.0.13
+//noinfopath-filters@0.0.16
 
 (function (angular) {
  

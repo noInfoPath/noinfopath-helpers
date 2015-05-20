@@ -1,5 +1,6 @@
 /node_modules
 /test
+/coverage
 .gitignore
 gruntfile.js
 karma.conf.js

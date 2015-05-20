@@ -1,5 +1,8 @@
-//noinfopath-filters@0.0.16
-
+/**
+ * #noinfopath-filters
+ * @version 0.0.17
+ * NoInfoPath Filters
+ */
 (function (angular) {
  
 	angular

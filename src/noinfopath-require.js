@@ -1,7 +1,8 @@
-//noinfopath-require@0.0.16
-//
-/*global angular*/
-
+/**
+ * #noinfopath-require
+ * @version 0.0.17
+ * NoInfoPath Require
+ */
 (function(angular, undefined){
 	"use strict";
 

@@ -4,14 +4,12 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    markdox : {
-      target : {
-        files: [{
-          src: 'noinfopath-sharepoint.js',
-          dest: 'README.md'
-          }]
-        }
+    concat: {
+      dist: {
+        src: ['src/*.js'],
+        dest: 'dist/noinfopath-helpers.js',
       },
+    },
     watch: {
         dev: {
           files: ['src/*.*'],
@@ -30,16 +28,29 @@ module.exports = function(grunt) {
         singleRun: true,
         browsers: ['PhantomJS']
       }
+    },
+    bumpup: {
+            file: 'package.json'
+    },
+    version: {
+      options: {
+        prefix: '@version\\s*'
+      },
+      defaults: {
+        src: ['src/noinfopath-filters.js',
+              'src/noinfopath-helpers.js',
+              'src/noinfopath-navigator.js',
+              'src/noinfopath-require.js']
+      }
     }
   });
 
+  grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-karma');
-  grunt.loadNpmTasks('grunt-markdox');
+  grunt.loadNpmTasks('grunt-bumpup');
+  grunt.loadNpmTasks('grunt-version');
 
   //Default task(s).
-  grunt.registerTask('documentation', ['markdox']);
-  grunt.registerTask('production', ['copy:production']);
-  grunt.registerTask('development', ['copy:development']);
+  grunt.registerTask('build', ['karma:continuous','bumpup','version', 'concat:dist']);
 };

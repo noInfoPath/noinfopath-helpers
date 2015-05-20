@@ -1,6 +1,6 @@
 /**
  * #noinfopath-navigator
- * @version 0.0.17
+ * @version 0.0.18
  * NoInfoPath Navigator
  */
 var noGeoMock;

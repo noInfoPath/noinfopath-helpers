@@ -1,6 +1,6 @@
 /**
  * #noinfopath-require
- * @version 0.0.17
+ * @version 0.0.18
  * NoInfoPath Require
  */
 (function(angular, undefined){

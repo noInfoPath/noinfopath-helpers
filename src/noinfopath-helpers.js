@@ -1,8 +1,4 @@
-/**
- * #noinfopath-helpers
- * @version 0.0.18
- * NoInfoPath Helpers
- */
+//helpers.js
 (function(angular,undefined){
 
 	angular.module('noinfopath.helpers',[])

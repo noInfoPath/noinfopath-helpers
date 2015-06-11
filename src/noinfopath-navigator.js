@@ -1,8 +1,4 @@
-/**
- * #noinfopath-navigator
- * @version 0.0.18
- * NoInfoPath Navigator
- */
+//navigator.js
 var noGeoMock;
 (function(angular,undefined){
 	"use strict";

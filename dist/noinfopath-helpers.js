@@ -1,8 +1,9 @@
 /**
- * #noinfopath-filters
- * @version 0.0.18
- * NoInfoPath Filters
+ * #noinfopath-Helpers
+ * @version 0.0.19
  */
+
+//filters.js
 (function (angular) {
  
 	angular
@@ -10,20 +11,23 @@
 		.filter("format", function () {
 			return function (input) {
 				var args = arguments;
-//console.log("args: ", angular.toJson(args));
+
 				return input.replace(/\{(\d+)\}/g, function (match, capture) {
-					//console.log(angular.toJson(args))
+
 					return args[1*capture + 1];
 				});
 			};
-		});
+		})
+
+		.filter("nonulls", function () {
+			return function (input) {
+				return input ? input : "";
+			};
+		})
+		;
  
 })(angular);
-/**
- * #noinfopath-helpers
- * @version 0.0.18
- * NoInfoPath Helpers
- */
+//helpers.js
 (function(angular,undefined){
 
 	angular.module('noinfopath.helpers',[])
@@ -258,11 +262,7 @@
 
 
 
-/**
- * #noinfopath-navigator
- * @version 0.0.18
- * NoInfoPath Navigator
- */
+//navigator.js
 var noGeoMock;
 (function(angular,undefined){
 	"use strict";
@@ -384,11 +384,7 @@ var noGeoMock;
 			return directive;
 		}])
 })(angular);
-/**
- * #noinfopath-require
- * @version 0.0.18
- * NoInfoPath Require
- */
+//require.js
 (function(angular, undefined){
 	"use strict";
 

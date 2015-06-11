@@ -37,10 +37,7 @@ module.exports = function(grunt) {
         prefix: '@version\\s*'
       },
       defaults: {
-        src: ['src/noinfopath-filters.js',
-              'src/noinfopath-helpers.js',
-              'src/noinfopath-navigator.js',
-              'src/noinfopath-require.js']
+        src: ['src/noinfopath-filters.js']
       }
     }
   });

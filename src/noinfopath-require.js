@@ -1,8 +1,4 @@
-/**
- * #noinfopath-require
- * @version 0.0.18
- * NoInfoPath Require
- */
+//require.js
 (function(angular, undefined){
 	"use strict";
 

@@ -8,7 +8,6 @@
 				action()
 				.then(function(deferred, results, execQueue, i, data){
 					results[i] = data;
-					console.log("execAction finished", i, data);
 					_recurse(deferred, results, execQueue, ++i);
 				}.bind(null, deferred, results, execQueue, i))
 				.catch(deferred.reject);

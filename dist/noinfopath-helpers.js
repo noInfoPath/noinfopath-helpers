@@ -2,7 +2,7 @@
 
 /*
  * # NoInfoPath Helpers (noinfopath.helpers)
- * @version 2.0.1
+ * @version 2.0.2
  *
  */
 
@@ -399,7 +399,6 @@ var noGeoMock;
 				action()
 				.then(function(deferred, results, execQueue, i, data){
 					results[i] = data;
-					console.log("execAction finished", i, data);
 					_recurse(deferred, results, execQueue, ++i);
 				}.bind(null, deferred, results, execQueue, i))
 				.catch(deferred.reject);

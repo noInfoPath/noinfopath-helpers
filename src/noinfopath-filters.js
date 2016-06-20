@@ -1,13 +1,12 @@
 /**
  * #noinfopath-Helpers
- * @version 0.0.20
+ * @version 2.0.2
  */
 
-//filters.js
 (function (angular) {
- 
+
 	angular
-		.module("noinfopath.filters",[])
+		.module("noinfopath.helpers")
 		.filter("format", function () {
 			return function (input) {
 				var args = arguments;
@@ -25,5 +24,5 @@
 			};
 		})
 		;
- 
+
 })(angular);

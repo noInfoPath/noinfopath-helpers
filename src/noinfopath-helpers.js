@@ -1,4 +1,11 @@
 //helpers.js
+
+/*
+ * # NoInfoPath Helpers (noinfopath.helpers)
+ * @version 2.0.1
+ *
+ */
+
 (function(angular,undefined){
 
 	angular.module('noinfopath.helpers',[])
@@ -60,7 +67,7 @@
 					}else{
 						angular.noop();
 					}
-				})
+				});
 
 				return params;
 			};
@@ -70,7 +77,7 @@
 					s = [],
 					add = function( key, value ) {
 						// If value is a function, invoke it and return its value
-						value = angular.isFunction( value ) ? value() : ( value == null ? "" : value );
+						value = angular.isFunction( value ) ? value() : ( value === null ? "" : value );
 						s[ s.length ] =  key + "=" + value;
 					};
 
@@ -109,23 +116,23 @@
 					 return  $filter("date")(value, "DateTime'yyyy-MM-ddT0hh:mm:ss'");
 				}else{
 					return value;
-				}					
-			};		
+				}
+			};
 
 			this.makeResourceUrl = function(endPointUri, listName, query){
 				var qs = query ? "?" + query : "";
 				return endPointUri + "/" + listName + qs;
 			};
-				
+
 			this.makeResourceUrls = function(endPointUri, resources){
 				var urls = {};
 				angular.forEach(resources, function(resource){
 					var url = SELF.makeResourceUrl(endPointUri, resource.TableName, resource.Query);
 					urls[resource.TableName] = url;
-				});				
+				});
 
 				return urls;
-			};				
+			};
 		}])
 
 		/**
@@ -141,20 +148,20 @@
 			{
 				parser = new DOMParser();
 			}
-			else 
-			{ 
+			else
+			{
 				//Downlevel IE support <= 8
 				//Normalize on $window for testablility.
 				parser = {
 					parseFromString: function(text, contenttype){
 						var xmlDoc =new ActiveXObject("Microsoft.XMLDOM");
 						xmlDoc.async=false;
-						xmlDoc.loadXML(text); 
+						xmlDoc.loadXML(text);
 
-						return xmlDoc;						
+						return xmlDoc;
 					}
-				}
-			} 
+				};
+			}
 
 			/**
 			 * @method
@@ -163,11 +170,11 @@
 			 * the normalized DOMParser created when the service
 			 * is instanciated.
 			 * @param  {string} xml a string containing a valid xml document
-			 * @return {object} XmlDOM object 
+			 * @return {object} XmlDOM object
 			 */
 			this.fromString = function(xml){
 			 	var xmlDoc = parser.parseFromString(xml,"text/xml");
-			 	return xmlDoc
+			 	return xmlDoc;
 			};
 
 			/**
@@ -193,12 +200,12 @@
 						children: []
 					};
 
-				
+
 
 				//All elements are added as objects
 				if(node.nodeType == 1 /*Element*/){
-					
-					
+
+
 					if(node.hasAttributes()){
 						angular.forEach(node.attributes, function(val, name){
 							//console.log(name, val.textContent);
@@ -224,11 +231,9 @@
 
 
 				}
-				
+
 				return obj;
-			};			
+			};
 		}])
 	;
-})(angular)
-
-
+})(angular);

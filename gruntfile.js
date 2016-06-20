@@ -6,8 +6,8 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     concat: {
       dist: {
-        src: ['src/*.js'],
-        dest: 'dist/noinfopath-helpers.js',
+        src: ['src/noinfopath-helpers.js', 'src/noinfopath-filters.js', 'src/noinfopath-navigator.js', 'src/no-action-queue.js'],
+        dest: 'dist/noinfopath-helpers.js'
       },
     },
     watch: {
@@ -30,14 +30,14 @@ module.exports = function(grunt) {
       }
     },
     bumpup: {
-            file: 'package.json'
+        file: 'package.json'
     },
     version: {
       options: {
         prefix: '@version\\s*'
       },
       defaults: {
-        src: ['src/noinfopath-filters.js']
+        src: ['src/noinfopath-helpers.js']
       }
     }
   });
@@ -50,5 +50,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-version');
 
   //Default task(s).
-  grunt.registerTask('build', ['karma:continuous','bumpup','version', 'concat:dist']);
+  grunt.registerTask('build', ['bumpup','version', 'concat:dist']);
 };

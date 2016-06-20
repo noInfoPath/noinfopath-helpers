@@ -1,33 +1,11 @@
-/**
- * #noinfopath-Helpers
- * @version 0.0.20
+//helpers.js
+
+/*
+ * # NoInfoPath Helpers (noinfopath.helpers)
+ * @version 2.0.1
+ *
  */
 
-//filters.js
-(function (angular) {
- 
-	angular
-		.module("noinfopath.filters",[])
-		.filter("format", function () {
-			return function (input) {
-				var args = arguments;
-
-				return input.replace(/\{(\d+)\}/g, function (match, capture) {
-
-					return args[1*capture + 1];
-				});
-			};
-		})
-
-		.filter("nonulls", function () {
-			return function (input) {
-				return input ? input : "";
-			};
-		})
-		;
- 
-})(angular);
-//helpers.js
 (function(angular,undefined){
 
 	angular.module('noinfopath.helpers',[])
@@ -89,7 +67,7 @@
 					}else{
 						angular.noop();
 					}
-				})
+				});
 
 				return params;
 			};
@@ -99,7 +77,7 @@
 					s = [],
 					add = function( key, value ) {
 						// If value is a function, invoke it and return its value
-						value = angular.isFunction( value ) ? value() : ( value == null ? "" : value );
+						value = angular.isFunction( value ) ? value() : ( value === null ? "" : value );
 						s[ s.length ] =  key + "=" + value;
 					};
 
@@ -138,23 +116,23 @@
 					 return  $filter("date")(value, "DateTime'yyyy-MM-ddT0hh:mm:ss'");
 				}else{
 					return value;
-				}					
-			};		
+				}
+			};
 
 			this.makeResourceUrl = function(endPointUri, listName, query){
 				var qs = query ? "?" + query : "";
 				return endPointUri + "/" + listName + qs;
 			};
-				
+
 			this.makeResourceUrls = function(endPointUri, resources){
 				var urls = {};
 				angular.forEach(resources, function(resource){
 					var url = SELF.makeResourceUrl(endPointUri, resource.TableName, resource.Query);
 					urls[resource.TableName] = url;
-				});				
+				});
 
 				return urls;
-			};				
+			};
 		}])
 
 		/**
@@ -170,20 +148,20 @@
 			{
 				parser = new DOMParser();
 			}
-			else 
-			{ 
+			else
+			{
 				//Downlevel IE support <= 8
 				//Normalize on $window for testablility.
 				parser = {
 					parseFromString: function(text, contenttype){
 						var xmlDoc =new ActiveXObject("Microsoft.XMLDOM");
 						xmlDoc.async=false;
-						xmlDoc.loadXML(text); 
+						xmlDoc.loadXML(text);
 
-						return xmlDoc;						
+						return xmlDoc;
 					}
-				}
-			} 
+				};
+			}
 
 			/**
 			 * @method
@@ -192,11 +170,11 @@
 			 * the normalized DOMParser created when the service
 			 * is instanciated.
 			 * @param  {string} xml a string containing a valid xml document
-			 * @return {object} XmlDOM object 
+			 * @return {object} XmlDOM object
 			 */
 			this.fromString = function(xml){
 			 	var xmlDoc = parser.parseFromString(xml,"text/xml");
-			 	return xmlDoc
+			 	return xmlDoc;
 			};
 
 			/**
@@ -222,12 +200,12 @@
 						children: []
 					};
 
-				
+
 
 				//All elements are added as objects
 				if(node.nodeType == 1 /*Element*/){
-					
-					
+
+
 					if(node.hasAttributes()){
 						angular.forEach(node.attributes, function(val, name){
 							//console.log(name, val.textContent);
@@ -253,20 +231,46 @@
 
 
 				}
-				
+
 				return obj;
-			};			
+			};
 		}])
 	;
-})(angular)
+})(angular);
 
+/**
+ * #noinfopath-Helpers
+ * @version 2.0.2
+ */
 
+(function (angular) {
 
-//navigator.js
+	angular
+		.module("noinfopath.helpers")
+		.filter("format", function () {
+			return function (input) {
+				var args = arguments;
+
+				return input.replace(/\{(\d+)\}/g, function (match, capture) {
+
+					return args[1*capture + 1];
+				});
+			};
+		})
+
+		.filter("nonulls", function () {
+			return function (input) {
+				return input ? input : "";
+			};
+		})
+		;
+
+})(angular);
+
 var noGeoMock;
 (function(angular,undefined){
 	"use strict";
-	angular.module("noinfopath.navigator", [])
+	angular.module("noinfopath.helpers")
 
 		.factory("noGeo", ['$timeout', '$q', function($timeout, $q){
 
@@ -293,25 +297,25 @@ var noGeoMock;
 	        }
 
 
-			_mock.getCurrentPosition =	function(successCallback, errorCallback, options){ 
-				if(!successCallback){ throw "successCallback is required"; } 
+			_mock.getCurrentPosition =	function(successCallback, errorCallback, options){
+				if(!successCallback){ throw "successCallback is required"; }
 				successCallback(_positionFake);
 			};
-			
+
 			_mock.watchPosition = function(successCallback, errorCallback, options){ return 1;};
-   			
+
    			_mock.clearWatch = function(watchId){};
-	
+
    			_service.getCurrentPosition = function(options){
    				var deferred = $q.defer();
    				_geo.getCurrentPosition(deferred.resolve, deferred.reject, options);
    				return deferred.promise;
-   			};	
+   			};
 
   			_service.watchPosition = function(options){
    				var deferred = $q.defer();
    				_watchId = _geo.watchPosition(deferred.resolve, deferred.reject, options);
-   				return deferred.promise;  				
+   				return deferred.promise;
   			};
 
   			_service.clearWatch = function(){
@@ -340,7 +344,7 @@ var noGeoMock;
 				$timeout(function() {_broadcast();}, 10);
 
 				function _broadcast(){
-					 $rootScope.$broadcast("noStatus::online", _isOnTheLine); 
+					 $rootScope.$broadcast("noStatus::online", _isOnTheLine);
 				}
 				window.addEventListener("online", function(){
 					_isOnTheLine = true;
@@ -350,10 +354,10 @@ var noGeoMock;
 				window.addEventListener("offline", function(){
 					_isOnTheLine = false;
 					_broadcast();
-				});	
+				});
 			}
 
-			return new _service();		
+			return new _service();
 		}])
 
 		.directive("noWhenOnline", ['noStatus', function(noStatus){
@@ -362,13 +366,13 @@ var noGeoMock;
 					console.warn("TODO: Enhancement");
 					switch(attr.noWhenOnline){
 						case "hide":
-							if( noStatus.onLine ) 
+							if( noStatus.onLine )
 								{ el.hide(); }
 							else
 								{ el.show(); }
 							break;
 						case "show":
-							if( noStatus.onLine ) 
+							if( noStatus.onLine )
 								{ el.show(); }
 							else
 								{ el.hide(); }
@@ -384,44 +388,35 @@ var noGeoMock;
 			return directive;
 		}])
 })(angular);
-//require.js
-(function(angular, undefined){
-	"use strict";
 
-	angular.module("noinfopath.require",[])
-		.provider("noRequire", [function (){
+(function(angular, undefined) {
+	angular.module('noinfopath.helpers')
 
-			function _service($injector, $q){
-				this.loadScript = function(url){
-
-					var deferred = $q.defer(),
-						script = document.createElement("script");
-
-					script.setAttribute("src", url);
-					script.setAttribute("type","text/javascript");
-
-					script.onload = function(e) {
-						deferred.resolve(url);
-						//register($injector, providers, [moduleName])
-						//var fn = angular.module(moduleName); //initialize the module????
-
-					};				
-
-					script.onerror = function(e) {
-						deferred.reject(e);
-					};
-
-					document.body.appendChild(script);	
-
-					return deferred.promise;			
-				}				
+	.service("noActionQueue", ["$q", function($q) {
+		function _recurse(deferred, results, execQueue, i){
+			var action = execQueue[i];
+			if(action){
+				action()
+				.then(function(deferred, results, execQueue, i, data){
+					results[i] = data;
+					console.log("execAction finished", i, data);
+					_recurse(deferred, results, execQueue, ++i);
+				}.bind(null, deferred, results, execQueue, i))
+				.catch(deferred.reject);
+			}else {
+				deferred.resolve(results);
 			}
-	
-			this.$get = ['$injector', '$q', function($injector, $q){
-				return new _service($injector, $q);
-			}];
+		}
 
-		}])
+		function _synchronize(execQueue) {
+			var deferred = $q.defer();
+			var results = [];
+			_recurse(deferred, results, execQueue, 0);
+			return deferred.promise;
+		}
+
+		this.synchronize =  _synchronize;
+	}])
 	;
 
-})(angular)
+})(angular);

@@ -1,8 +1,7 @@
-//navigator.js
 var noGeoMock;
 (function(angular,undefined){
 	"use strict";
-	angular.module("noinfopath.navigator", [])
+	angular.module("noinfopath.helpers")
 
 		.factory("noGeo", ['$timeout', '$q', function($timeout, $q){
 
@@ -29,25 +28,25 @@ var noGeoMock;
 	        }
 
 
-			_mock.getCurrentPosition =	function(successCallback, errorCallback, options){ 
-				if(!successCallback){ throw "successCallback is required"; } 
+			_mock.getCurrentPosition =	function(successCallback, errorCallback, options){
+				if(!successCallback){ throw "successCallback is required"; }
 				successCallback(_positionFake);
 			};
-			
+
 			_mock.watchPosition = function(successCallback, errorCallback, options){ return 1;};
-   			
+
    			_mock.clearWatch = function(watchId){};
-	
+
    			_service.getCurrentPosition = function(options){
    				var deferred = $q.defer();
    				_geo.getCurrentPosition(deferred.resolve, deferred.reject, options);
    				return deferred.promise;
-   			};	
+   			};
 
   			_service.watchPosition = function(options){
    				var deferred = $q.defer();
    				_watchId = _geo.watchPosition(deferred.resolve, deferred.reject, options);
-   				return deferred.promise;  				
+   				return deferred.promise;
   			};
 
   			_service.clearWatch = function(){
@@ -76,7 +75,7 @@ var noGeoMock;
 				$timeout(function() {_broadcast();}, 10);
 
 				function _broadcast(){
-					 $rootScope.$broadcast("noStatus::online", _isOnTheLine); 
+					 $rootScope.$broadcast("noStatus::online", _isOnTheLine);
 				}
 				window.addEventListener("online", function(){
 					_isOnTheLine = true;
@@ -86,10 +85,10 @@ var noGeoMock;
 				window.addEventListener("offline", function(){
 					_isOnTheLine = false;
 					_broadcast();
-				});	
+				});
 			}
 
-			return new _service();		
+			return new _service();
 		}])
 
 		.directive("noWhenOnline", ['noStatus', function(noStatus){
@@ -98,13 +97,13 @@ var noGeoMock;
 					console.warn("TODO: Enhancement");
 					switch(attr.noWhenOnline){
 						case "hide":
-							if( noStatus.onLine ) 
+							if( noStatus.onLine )
 								{ el.hide(); }
 							else
 								{ el.show(); }
 							break;
 						case "show":
-							if( noStatus.onLine ) 
+							if( noStatus.onLine )
 								{ el.show(); }
 							else
 								{ el.hide(); }

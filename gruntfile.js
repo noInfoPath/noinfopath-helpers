@@ -13,7 +13,7 @@ module.exports = function(grunt) {
     watch: {
         dev: {
           files: ['src/*.*'],
-          tasks: ['documentation'],
+          tasks: ['compile'],
           options: {
             livereload: true
           }
@@ -50,5 +50,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-version');
 
   //Default task(s).
-  grunt.registerTask('build', ['bumpup','version', 'concat:dist']);
+  	grunt.registerTask('build', ['bumpup','version', 'concat:dist']);
+    grunt.registerTask('compile', ['concat:dist']);
 };

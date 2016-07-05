@@ -1,3 +1,4 @@
+//no-action-queue.js
 (function(angular, undefined) {
 	angular.module('noinfopath.helpers')
 
@@ -11,7 +12,9 @@
 						console.log("execAction finished", i, data);
 						_recurse(deferred, results, execQueue, ++i);
 					}.bind(null, deferred, results, execQueue, i))
-					.catch(deferred.reject);
+					.catch(function(err){
+						deferred.reject(err);
+					});
 				}else {
 					deferred.resolve(results);
 				}
@@ -35,7 +38,7 @@
 					if(angular.isObject(param)){
 						if(param.provider === "scope"){
 							promises.push($q.when(noInfoPath.getItem(scope, param.property)));
-						}else{
+						}else if(param.provider){
 							var prov = _resolveActionProvider(param),
 								method = prov ? prov[param.method] : undefined,
 								property = param.property ? noInfoPath.getItem(prov, param.property) : undefined;
@@ -47,6 +50,8 @@
 							}else{
 								promises.push($q.reject({"error": "Invalid parameter", data: param}));
 							}
+						}else{
+							promises.push($q.when(param));
 						}
 					}else{
 						promises.push($q.when(param));
@@ -167,7 +172,6 @@
 			}
 			this.configureWatches = _configureWatches;
 
-
 			function _createActionQueue(ctx, scope, el, actions, fnWrapper){
 				var execFns = [];
 
@@ -189,7 +193,6 @@
 				return deferred.promise;
 			}
 			this.synchronize =  _synchronize;
-
 
 		}])
 	;

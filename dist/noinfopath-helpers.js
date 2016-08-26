@@ -401,7 +401,11 @@ var noGeoMock;
 					.then(function(deferred, results, execQueue, i, data){
 						results[i] = data;
 						console.log("execAction finished", i, data);
-						_recurse(deferred, results, execQueue, ++i);
+						if(data && data.stopActionQueue) {
+							deferred.resolve(results);	
+						} else {
+							_recurse(deferred, results, execQueue, ++i);
+						}
 					}.bind(null, deferred, results, execQueue, i))
 					.catch(function(err){
 						deferred.reject(err);

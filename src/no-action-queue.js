@@ -2,7 +2,7 @@
 (function(angular, undefined) {
 	angular.module('noinfopath.helpers')
 
-		.service("noActionQueue", ["$injector", "$q", function($injector, $q) {
+		.service("noActionQueue", ["$injector", "$q", "$timeout", function($injector, $q, $timeout) {
 			function _recurse(deferred, results, execQueue, i){
 				var action = execQueue[i];
 				if(action){
@@ -11,7 +11,11 @@
 						results[i] = data;
 						console.log("execAction finished", i, data);
 						if(data && data.stopActionQueue) {
-							deferred.resolve(results);	
+							deferred.resolve(results);
+						} else if (data && data.pauseFor) {
+							$timeout(function() {
+								_recurse(deferred, results, execQueue, ++i);
+							}, data.pauseFor);
 						} else {
 							_recurse(deferred, results, execQueue, ++i);
 						}

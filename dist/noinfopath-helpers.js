@@ -440,10 +440,11 @@ var noGeoMock;
 						}else if(param.provider){
 							var prov = _resolveActionProvider(param),
 								method = prov ? prov[param.method] : undefined,
+								methodParams = param.params ? param.params : undefined,
 								property = param.property ? noInfoPath.getItem(prov, param.property) : undefined;
 
 							if(method){
-								promises.push($q.when(method()));
+								promises.push($q.when(method(methodParams)));
 							}else if(property){
 								promises.push($q.when(property));
 							}else{
@@ -596,4 +597,26 @@ var noGeoMock;
 		}])
 	;
 
+})(angular);
+
+// noinfopath-state-helper.js
+(function(angular, undefined){
+	angular.module('noinfopath.helpers')
+		.service("noStateHelper", ["$stateParams", function($stateParams){
+			this.resolveParams = function(paramArray){
+				var returnObj = {};
+
+				if(paramArray){
+					for(var i = 0; i < paramArray.length; i++){
+						var param = paramArray[i];
+
+						returnObj[param] = $stateParams[param];
+					}
+				}
+				
+				console.log(returnObj);
+				return returnObj;
+			};
+		}])
+	;
 })(angular);

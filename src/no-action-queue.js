@@ -49,10 +49,11 @@
 						}else if(param.provider){
 							var prov = _resolveActionProvider(param),
 								method = prov ? prov[param.method] : undefined,
+								methodParams = param.params ? param.params : undefined,
 								property = param.property ? noInfoPath.getItem(prov, param.property) : undefined;
 
 							if(method){
-								promises.push($q.when(method()));
+								promises.push($q.when(method(methodParams)));
 							}else if(property){
 								promises.push($q.when(property));
 							}else{

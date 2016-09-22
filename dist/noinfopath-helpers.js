@@ -2,7 +2,7 @@
 
 /*
  * # NoInfoPath Helpers (noinfopath.helpers)
- * @version 2.0.3
+ * @version 2.0.4
  *
  */
 
@@ -393,7 +393,7 @@ var noGeoMock;
 (function(angular, undefined) {
 	angular.module('noinfopath.helpers')
 
-		.service("noActionQueue", ["$injector", "$q", "$timeout", function($injector, $q, $timeout) {
+		.service("noActionQueue", ["$injector", "$q", function($injector, $q) {
 			function _recurse(deferred, results, execQueue, i){
 				var action = execQueue[i];
 				if(action){
@@ -401,15 +401,7 @@ var noGeoMock;
 					.then(function(deferred, results, execQueue, i, data){
 						results[i] = data;
 						console.log("execAction finished", i, data);
-						if(data && data.stopActionQueue) {
-							deferred.resolve(results);
-						} else if (data && data.pauseFor) {
-							$timeout(function() {
-								_recurse(deferred, results, execQueue, ++i);
-							}, data.pauseFor);
-						} else {
-							_recurse(deferred, results, execQueue, ++i);
-						}
+						_recurse(deferred, results, execQueue, ++i);
 					}.bind(null, deferred, results, execQueue, i))
 					.catch(function(err){
 						deferred.reject(err);
@@ -440,11 +432,11 @@ var noGeoMock;
 						}else if(param.provider){
 							var prov = _resolveActionProvider(param),
 								method = prov ? prov[param.method] : undefined,
-								methodParams = param.params ? param.params : undefined,
+								methparams = param.params,
 								property = param.property ? noInfoPath.getItem(prov, param.property) : undefined;
 
 							if(method){
-								promises.push($q.when(method(methodParams)));
+								promises.push($q.when(method(methparams)));
 							}else if(property){
 								promises.push($q.when(property));
 							}else{
@@ -599,22 +591,18 @@ var noGeoMock;
 
 })(angular);
 
-// noinfopath-state-helper.js
-(function(angular, undefined){
+(function(angular, undefined) {
 	angular.module('noinfopath.helpers')
 		.service("noStateHelper", ["$stateParams", function($stateParams){
-			this.resolveParams = function(paramArray){
+			this.resolveParams = function(params){
 				var returnObj = {};
 
-				if(paramArray){
-					for(var i = 0; i < paramArray.length; i++){
-						var param = paramArray[i];
+				for(var i = 0; i < params.length; i++){
+					var param = params[i];
 
-						returnObj[param] = $stateParams[param];
-					}
+					returnObj[param] = $stateParams[param];
 				}
-				
-				console.log(returnObj);
+
 				return returnObj;
 			};
 		}])

@@ -2,7 +2,7 @@
 (function(angular, undefined) {
 	angular.module('noinfopath.helpers')
 
-		.service("noActionQueue", ["$injector", "$q", "$timeout", function($injector, $q, $timeout) {
+		.service("noActionQueue", ["$injector", "$q", function($injector, $q) {
 			function _recurse(deferred, results, execQueue, i){
 				var action = execQueue[i];
 				if(action){
@@ -10,15 +10,7 @@
 					.then(function(deferred, results, execQueue, i, data){
 						results[i] = data;
 						console.log("execAction finished", i, data);
-						if(data && data.stopActionQueue) {
-							deferred.resolve(results);
-						} else if (data && data.pauseFor) {
-							$timeout(function() {
-								_recurse(deferred, results, execQueue, ++i);
-							}, data.pauseFor);
-						} else {
-							_recurse(deferred, results, execQueue, ++i);
-						}
+						_recurse(deferred, results, execQueue, ++i);
 					}.bind(null, deferred, results, execQueue, i))
 					.catch(function(err){
 						deferred.reject(err);
@@ -49,10 +41,11 @@
 						}else if(param.provider){
 							var prov = _resolveActionProvider(param),
 								method = prov ? prov[param.method] : undefined,
+								methparams = param.params,
 								property = param.property ? noInfoPath.getItem(prov, param.property) : undefined;
 
 							if(method){
-								promises.push($q.when(method()));
+								promises.push($q.when(method(methparams)));
 							}else if(property){
 								promises.push($q.when(property));
 							}else{

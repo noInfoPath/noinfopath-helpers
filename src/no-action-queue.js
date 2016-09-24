@@ -1,7 +1,31 @@
 //no-action-queue.js
 (function(angular, undefined) {
 	angular.module('noinfopath.helpers')
-
+		/**
+		*	## NoActionQueueService
+		*
+		*	> Service Name: noActionQueue
+		*
+		*	### configuration
+		*
+		*
+		* 	[{
+		* 	 "scope": "current|parent|root"
+		* 	 "scopeKey": "projectTabs",
+		* 	 "action": {
+		* 		 "provider": "noNavigationManager",
+		* 		 "method": "changeNavBar",
+		* 		 "params": [
+		* 			 {
+		* 				 "provider": "scope|scope.$parent|scope.$root",
+		* 				 "property": "projectTabs.btnBar"
+		* 			 }
+		* 		 ]
+		* 	 }
+		* 	}]
+		*
+		*
+		*/
 		.service("noActionQueue", ["$injector", "$q", function($injector, $q) {
 			function _recurse(deferred, results, execQueue, i){
 				var action = execQueue[i];
@@ -140,22 +164,6 @@
 			}
 
 			/*
-				* 	```json
-				* 	[{
-				* 	 "scope": "current|parent|root"
-				* 	 "scopeKey": "projectTabs",
-				* 	 "action": {
-				* 		 "provider": "noNavigationManager",
-				* 		 "method": "changeNavBar",
-				* 		 "params": [
-				* 			 {
-				* 				 "provider": "scope|scope.$parent|scope.$root",
-				* 				 "property": "projectTabs.btnBar"
-				* 			 }
-				* 		 ]
-				* 	 }
-				* 	}]
-				* 	```
 			*/
 			function _configureWatch(ctx, scope, el, watch) {
 				var execQueue =  _createActionQueue(ctx, scope, el, watch.actions),

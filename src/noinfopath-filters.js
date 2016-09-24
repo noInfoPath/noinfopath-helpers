@@ -1,28 +1,38 @@
-/**
- * #noinfopath-Helpers
- * @version 2.0.2
- */
-
 (function (angular) {
 
 	angular
 		.module("noinfopath.helpers")
-		.filter("format", function () {
-			return function (input) {
-				var args = arguments;
+			/**
+			*	## format Filter
+			*
+			*	Uses the arbitrary arguments list passed to the filter to
+			*	replace numbered placeholders.
+			*
+			*	```js
+			*	var i = "Today is {1}";
+			*
+			*	$filter("format")(i, "sunny");
+			*
+			*	//Output:  "Today is sunny"
 
-				return input.replace(/\{(\d+)\}/g, function (match, capture) {
+			*	```
+			*/
+			.filter("format", function () {
+				return function (input) {
+					var args = arguments;
 
-					return args[1*capture + 1];
-				});
-			};
-		})
+					return input.replace(/\{(\d+)\}/g, function (match, capture) {
 
-		.filter("nonulls", function () {
-			return function (input) {
-				return input ? input : "";
-			};
-		})
+						return args[1*capture + 1];
+					});
+				};
+			})
+
+			.filter("nonulls", function () {
+				return function (input) {
+					return input ? input : "";
+				};
+			})
 		;
 
 })(angular);

@@ -1,6 +1,6 @@
 {
   "name": "@noinfopath/noinfopath-helpers",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "noinfopath helpers module",
   "scripts": {
     "test": "karma start"
@@ -21,6 +21,7 @@
     "grunt-contrib-copy": "^0.7.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-karma": "^0.10.1",
+    "grunt-nodocs": "^1.0.2",
     "grunt-version": "^1.0.0",
     "jasmine-ajax": "^3.0.0",
     "jasmine-core": "^2.1.3",

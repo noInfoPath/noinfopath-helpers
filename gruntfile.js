@@ -6,7 +6,7 @@ module.exports = function (grunt) {
 		pkg: grunt.file.readJSON('package.json'),
 		concat: {
 			dist: {
-				src: ['src/noinfopath-helpers.js', 'src/noinfopath-filters.js', 'src/noinfopath-navigator.js', 'src/no-action-queue.js', 'src/noinfopath-state-helper.js', 'src/docready.js'],
+				src: ['src/noinfopath-helpers.js', 'src/noinfopath-filters.js', 'src/noinfopath-navigator.js', 'src/no-action-queue.js', 'src/noinfopath-state-helper.js', 'src/docready.js', 'src/print.js'],
 				dest: 'dist/noinfopath-helpers.js'
 			},
 			readme: {
@@ -59,7 +59,7 @@ module.exports = function (grunt) {
 					expand: true,
 					flatten: true,
 					src: ['dist/noinfopath-helpers.js'],
-					dest: '/Users/gochinj/ws/rm/v4/rm-test-server-node/app/lib/js/noinfopath/'
+					dest: '/Users/gochinj/ws/rm/v4/root/lib/js/noinfopath/'
                  }]
 			}
 		}

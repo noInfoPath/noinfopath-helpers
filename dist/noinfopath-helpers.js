@@ -475,7 +475,7 @@ var noGeoMock;
 				try{
 					return $injector.get(action.provider);
 				}catch(err){
-					console.error("invalid action provider: ", action);
+					if(action.provider !== "scope") console.error("invalid action provider: ", action);
 					return;
 				}
 			}
@@ -520,12 +520,22 @@ var noGeoMock;
 			}
 
 			function _resolveActionMethodAndParams(scope, action){
-				var prov = _resolveActionProvider(action),
-					method = prov ? prov[action.method] : _noop.bind(null, action);
+				var prov = _resolveActionProvider(action) || scope,
+					prop = action.property ? noInfoPath.getItem(prov, action.property) : undefined,
+					method;
+
+				if(action.property && prop) {
+					method = prop[action.method];
+				}else{
+ 					method = prov ? prov[action.method] : undefined;
+				}
+
+				//if(!method) method = _noop.bind(null, action);
+
 
 				return _resolveActionParams(scope, action.params || [])
 					.then(function(params){
-						return {method: method ||  _noop.bind(null, action), params: params};
+						return {provider: prov, property: prop, method: method ||  _noop.bind(null, action), params: params};
 					})
 					.catch(function(err){
 						console.error(err);
@@ -538,12 +548,16 @@ var noGeoMock;
 					return $q(function(resolve, reject){
 						_resolveActionMethodAndParams(scope, action)
 							.then(function(result){
-								var returnValue = result.method.apply(ctx, action.noContextParams ? result.params : [ctx, scope, el].concat(result.params));
+								var returnValue = result.method.apply(result.property ? result.property : ctx, action.noContextParams ? result.params : [ctx, scope, el].concat(result.params));
 
-								if(returnValue && returnValue.then){
+								if(returnValue && returnValue.then && returnValue.catch){
 									returnValue
 										.then(resolve)
 										.catch(reject);
+								} else if(returnValue && returnValue.then && returnValue.fail) {
+									returnValue
+										.then(resolve)
+										.fail(reject);
 								}else{
 									resolve(returnValue);
 								}

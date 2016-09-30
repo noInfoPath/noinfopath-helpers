@@ -5,7 +5,7 @@
  *
  *	> `Module Name: noinfopath.helpers`
  *
- *	> @version 2.0.6
+ *	> @version 2.0.7
  *
  *  ## Installation
  *      npm install noinfopath-helpers --save
@@ -496,7 +496,12 @@ var noGeoMock;
 								property = param.property ? noInfoPath.getItem(prov, param.property) : undefined;
 
 							if(method){
-								promises.push($q.when(method(methparams)));
+								if(param.passLocalScope) {
+									promises.push($q.when(method(scope, methparams)));
+
+								} else {
+									promises.push($q.when(method(methparams)));
+								}
 							}else if(property){
 								promises.push($q.when(property));
 							}else{
@@ -651,7 +656,29 @@ var noGeoMock;
 
 (function(angular, undefined) {
 	angular.module('noinfopath.helpers')
+		/**
+		*	## NoStateHelperService
+		*
+		*	> Service Name: noStateHelper
+		*/
 		.service("noStateHelper", ["$stateParams", function($stateParams){
+			/**
+			*	### Methods
+			*
+			*	#### resolveParams(params)
+			*
+			*	> TODO: What does this method actuallu do?
+			*
+			*	##### Parameters
+			*
+			*	###### params `Array`
+			*
+			*	An arrray of parameters name to extract from $stateParams.
+			*
+			*	##### Returns `object`
+			*
+			*	> TODO: Describe what is in the objec returned.
+			*/
 			this.resolveParams = function(params){
 				var returnObj = {};
 
@@ -662,6 +689,22 @@ var noGeoMock;
 				}
 
 				return returnObj;
+			};
+
+			this.makeStateParams = function(scope, params) {
+				var values = noInfoPath.resolveParams(params, scope),
+					results = {};
+
+				for(var i=0; i < params.length; i++) {
+					var param = params[i],
+						value = values[i];
+
+					results[param.key] = value;
+				}
+
+				console.log("makeStateParams", results);
+
+				return results;
 			};
 		}])
 	;

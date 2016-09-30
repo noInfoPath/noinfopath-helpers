@@ -69,7 +69,12 @@
 								property = param.property ? noInfoPath.getItem(prov, param.property) : undefined;
 
 							if(method){
-								promises.push($q.when(method(methparams)));
+								if(param.passLocalScope) {
+									promises.push($q.when(method(scope, methparams)));
+
+								} else {
+									promises.push($q.when(method(methparams)));
+								}
 							}else if(property){
 								promises.push($q.when(property));
 							}else{

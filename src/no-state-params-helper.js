@@ -34,6 +34,22 @@
 
 				return returnObj;
 			};
+
+			this.makeStateParams = function(scope, params) {
+				var values = noInfoPath.resolveParams(params, scope),
+					results = {};
+
+				for(var i=0; i < params.length; i++) {
+					var param = params[i],
+						value = values[i];
+
+					results[param.key] = value;
+				}
+
+				console.log("makeStateParams", results);
+
+				return results;
+			};
 		}])
 	;
 })(angular);

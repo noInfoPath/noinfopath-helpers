@@ -2,7 +2,7 @@
 
 > `Module Name: noinfopath.helpers`
 
-> @version 2.0.6
+> @version 2.0.7
 
  ## Installation
      npm install noinfopath-helpers --save
@@ -89,6 +89,26 @@ $filter("format")(i, "sunny");
 
 
 
+
+## NoStateHelperService
+
+> Service Name: noStateHelper
+
+### Methods
+
+#### resolveParams(params)
+
+> TODO: What does this method actuallu do?
+
+##### Parameters
+
+###### params `Array`
+
+An arrray of parameters name to extract from $stateParams.
+
+##### Returns `object`
+
+> TODO: Describe what is in the objec returned.
 
 ## NoDocumentReadyService  (a/k/a noDocumentReady)
 

@@ -697,15 +697,15 @@ var noGeoMock;
 						*	is the value.
 						*
 						*	```json
-						*	...
+						*	
 						*		{
-						*			params: [
+						*			"params:"" [
 						*				["foo", 1000],
 						*				["bar", false],
 						*				"pid"
 						*			]
 						*		}
-						*	...
+						*
 						*	```
 						*/
 						returnObj[param[0]] = param[1];

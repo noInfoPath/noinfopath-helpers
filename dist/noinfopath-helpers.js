@@ -5,7 +5,7 @@
  *
  *	> `Module Name: noinfopath.helpers`
  *
- *	> @version 2.0.7
+ *	> @version 2.0.8
  *
  *  ## Installation
  *      npm install noinfopath-helpers --save
@@ -460,7 +460,7 @@ var noGeoMock;
 					action()
 					.then(function(deferred, results, execQueue, i, data){
 						results[i] = data;
-						console.log("execAction finished", i, data);
+						console.log("execAction finished", i);
 						_recurse(deferred, results, execQueue, ++i);
 					}.bind(null, deferred, results, execQueue, i))
 					.catch(function(err){
@@ -678,6 +678,9 @@ var noGeoMock;
 			*	##### Returns `object`
 			*
 			*	> TODO: Describe what is in the objec returned.
+			*
+			*	### Remarks
+			*
 			*/
 			this.resolveParams = function(params){
 				var returnObj = {};
@@ -685,7 +688,24 @@ var noGeoMock;
 				for(var i = 0; i < params.length; i++){
 					var param = params[i];
 
-					returnObj[param] = $stateParams[param];
+					if(angular.isArray(param)) {
+						if(param.length !== 2) throw "Array type parameters must have exactly 2 elements.";
+
+						/**
+						*	When a parameter is an array then it is a name value pair.
+						*	The first element of the array is the name, and the second
+						*	is the value.
+						*/
+						returnObj[param[0]] = param[1];
+					} else {
+
+						/**
+						*	When a parameter is a string, then it is the name
+						*	of a $stateParams value.
+						*/
+						returnObj[param] = $stateParams[param];
+					}
+
 				}
 
 				return returnObj;

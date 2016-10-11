@@ -2,7 +2,7 @@
 
 > `Module Name: noinfopath.helpers`
 
-> @version 2.0.7
+> @version 2.0.8
 
  ## Installation
      npm install noinfopath-helpers --save
@@ -109,6 +109,16 @@ An arrray of parameters name to extract from $stateParams.
 ##### Returns `object`
 
 > TODO: Describe what is in the objec returned.
+
+### Remarks
+
+
+When a parameter is an array then it is a name value pair.
+The first element of the array is the name, and the second
+is the value.
+
+When a parameter is a string, then it is the name
+of a $stateParams value.
 
 ## NoDocumentReadyService  (a/k/a noDocumentReady)
 

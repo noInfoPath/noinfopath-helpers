@@ -22,6 +22,9 @@
 			*	##### Returns `object`
 			*
 			*	> TODO: Describe what is in the objec returned.
+			*
+			*	### Remarks
+			*
 			*/
 			this.resolveParams = function(params){
 				var returnObj = {};
@@ -29,7 +32,24 @@
 				for(var i = 0; i < params.length; i++){
 					var param = params[i];
 
-					returnObj[param] = $stateParams[param];
+					if(angular.isArray(param)) {
+						if(param.length !== 2) throw "Array type parameters must have exactly 2 elements.";
+
+						/**
+						*	When a parameter is an array then it is a name value pair.
+						*	The first element of the array is the name, and the second
+						*	is the value.
+						*/
+						returnObj[param[0]] = param[1];
+					} else {
+
+						/**
+						*	When a parameter is a string, then it is the name
+						*	of a $stateParams value.
+						*/
+						returnObj[param] = $stateParams[param];
+					}
+
 				}
 
 				return returnObj;

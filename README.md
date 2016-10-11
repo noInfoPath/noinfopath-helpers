@@ -4,10 +4,10 @@
 
 > @version 2.0.8
 
- ## Installation
+## Installation
      npm install noinfopath-helpers --save
 
- ## Dependencies
+## Dependencies
  None
 
 

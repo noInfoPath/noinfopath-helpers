@@ -43,7 +43,7 @@
 						*	```json
 						*	
 						*		{
-						*			"params:"" [
+						*			"params": [
 						*				["foo", 1000],
 						*				["bar", false],
 						*				"pid"

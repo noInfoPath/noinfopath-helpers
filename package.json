@@ -1,6 +1,6 @@
 {
   "name": "@noinfopath/noinfopath-helpers",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "description": "noinfopath helpers module",
   "scripts": {
     "test": "karma start"

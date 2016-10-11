@@ -2,12 +2,12 @@
 
 > `Module Name: noinfopath.helpers`
 
-> @version 2.0.8
+> @version 2.0.9
 
-## Installation
+ ## Installation
      npm install noinfopath-helpers --save
 
-## Dependencies
+ ## Dependencies
  None
 
 
@@ -113,14 +113,15 @@ An arrray of parameters name to extract from $stateParams.
 ### Remarks
 
 
-When a parameter is an array then it is a name value pair.
-The first element of the array is the name, and the second
-is the value.
+
+> When a parameter is an array then it is a name value pair.
+> The first element of the array is the name, and the second
+> is the value.
 
 ```json
 
 	{
-		"params": [
+		"params:"" [
 			["foo", 1000],
 			["bar", false],
 			"pid"
@@ -129,8 +130,46 @@ is the value.
 
 ```
 
-When a parameter is a string, then it is the name
-of a $stateParams value.
+> When a parameter is a string, then it is the name
+> of a $stateParams value.
+
+#### makeStateParams(scope, params)
+
+> TODO: What does this method actually do?
+
+##### Parameters
+
+###### scope `object`
+
+AngularJS Scope objcet.
+
+###### params `Array`
+
+An arrray of parameters name to extract from $stateParams.
+
+##### Returns `object`
+
+> TODO: Describe what is in the objec returned.
+
+### Remarks
+
+
+> When a parameter is an array then it is a name value pair.
+> The first element of the array is the name, and the second
+> is the value. resolveParams only looks at the second element
+> of the array. The first element is used by the caller.
+
+```json
+
+	{
+		"params:"" [
+			["foo", 1000],
+			["bar", false],
+			"pid"
+		]
+	}
+
+```
 
 ## NoDocumentReadyService  (a/k/a noDocumentReady)
 
@@ -151,3 +190,6 @@ Loading errors not rejected, but will raise a notification
 on the promise.  The service will also raise progress notifications as the
 running total increases and decrease with out errors. The promise will
 resolve when the doucment reduces to zero.
+
+
+

@@ -117,6 +117,18 @@ When a parameter is an array then it is a name value pair.
 The first element of the array is the name, and the second
 is the value.
 
+```json
+...
+	{
+		params: [
+			["foo", 1000],
+			["bar", false],
+			"pid"
+		]
+	}
+...
+```
+
 When a parameter is a string, then it is the name
 of a $stateParams value.
 

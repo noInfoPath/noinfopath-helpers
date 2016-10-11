@@ -39,6 +39,18 @@
 						*	When a parameter is an array then it is a name value pair.
 						*	The first element of the array is the name, and the second
 						*	is the value.
+						*
+						*	```json
+						*	...
+						*		{
+						*			params: [
+						*				["foo", 1000],
+						*				["bar", false],
+						*				"pid"
+						*			]
+						*		}
+						*	...
+						*	```
 						*/
 						returnObj[param[0]] = param[1];
 					} else {

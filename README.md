@@ -120,7 +120,7 @@ is the value.
 ```json
 
 	{
-		"params:"" [
+		"params": [
 			["foo", 1000],
 			["bar", false],
 			"pid"
@@ -151,6 +151,3 @@ Loading errors not rejected, but will raise a notification
 on the promise.  The service will also raise progress notifications as the
 running total increases and decrease with out errors. The promise will
 resolve when the doucment reduces to zero.
-
-
-

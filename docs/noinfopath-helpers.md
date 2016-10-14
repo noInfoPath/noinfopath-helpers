@@ -2,7 +2,7 @@
 
 > `Module Name: noinfopath.helpers`
 
-> @version 2.0.9
+> @version 2.0.10
 
  ## Installation
      npm install noinfopath-helpers --save
@@ -113,10 +113,9 @@ An arrray of parameters name to extract from $stateParams.
 ### Remarks
 
 
-
-> When a parameter is an array then it is a name value pair.
-> The first element of the array is the name, and the second
-> is the value.
+When a parameter is an array then it is a name value pair.
+The first element of the array is the name, and the second
+is the value.
 
 ```json
 
@@ -130,34 +129,13 @@ An arrray of parameters name to extract from $stateParams.
 
 ```
 
-> When a parameter is a string, then it is the name
-> of a $stateParams value.
+When a parameter is a string, then it is the name
+of a $stateParams value.
 
-#### makeStateParams(scope, params)
-
-> TODO: What does this method actually do?
-
-##### Parameters
-
-###### scope `object`
-
-AngularJS Scope objcet.
-
-###### params `Array`
-
-An arrray of parameters name to extract from $stateParams.
-
-##### Returns `object`
-
-> TODO: Describe what is in the objec returned.
-
-### Remarks
-
-
-> When a parameter is an array then it is a name value pair.
-> The first element of the array is the name, and the second
-> is the value. resolveParams only looks at the second element
-> of the array. The first element is used by the caller.
+When a parameter is an array then it is a name value pair.
+The first element of the array is the name, and the second
+is the value. resolveParams only looks at the second element
+of the array. The first element is used by the caller.
 
 ```json
 

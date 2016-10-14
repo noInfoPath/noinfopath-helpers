@@ -1,3 +1,4 @@
+// no-state-params-helper.js
 (function(angular, undefined) {
 	angular.module('noinfopath.helpers')
 		/**
@@ -28,15 +29,17 @@
 			*/
 			this.resolveParams = function(params){
 				var returnObj = {};
+
 				for(var i = 0; i < params.length; i++){
 					var param = params[i];
+
 					if(angular.isArray(param)) {
 						if(param.length !== 2) throw "Array type parameters must have exactly 2 elements.";
+
 						/**
-						*
-						*	> When a parameter is an array then it is a name value pair.
-						*	> The first element of the array is the name, and the second
-						*	> is the value.
+						*	When a parameter is an array then it is a name value pair.
+						*	The first element of the array is the name, and the second
+						*	is the value.
 						*
 						*	```json
 						*
@@ -52,65 +55,56 @@
 						*/
 						returnObj[param[0]] = param[1];
 					} else {
+
 						/**
-						*	> When a parameter is a string, then it is the name
-						*	> of a $stateParams value.
+						*	When a parameter is a string, then it is the name
+						*	of a $stateParams value.
 						*/
 						returnObj[param] = $stateParams[param];
 					}
+
 				}
+
 				return returnObj;
 			};
 
-			/**
-			*	#### makeStateParams(scope, params)
-			*
-			*	> TODO: What does this method actually do?
-			*
-			*	##### Parameters
-			*
-			*	###### scope `object`
-			*
-			*	AngularJS Scope objcet.
-			*
-			*	###### params `Array`
-			*
-			*	An arrray of parameters name to extract from $stateParams.
-			*
-			*	##### Returns `object`
-			*
-			*	> TODO: Describe what is in the objec returned.
-			*
-			*	### Remarks
-			*
-			*/
 			this.makeStateParams = function(scope, params) {
-				var values = _resolveParams(params, scope),
+				var values = noInfoPath.resolveParams(params, scope),
 					results = {};
+
 				for(var i=0; i < params.length; i++) {
 					var param = params[i],
 						value = values[i],
 						key = param.key;
+
 					if(!key && angular.isArray(param)){
 						key = param[0];
 					}
+
 					results[key] = value;
 				}
+
 				console.log("makeStateParams", results);
+
 				return results;
 			};
-			function _resolveParams($injector, taskParams, scope) {
+
+			function resolveParams($injector, taskParams, scope) {
 				var params = [];
+
 				if(taskParams) {
+
 					for(var p = 0; p < taskParams.length; p++) {
 						var param = taskParams[p];
+
 						if(angular.isArray(param)){
 							if(param.length !== 2) throw "Array type parameters must have exactly 2 elements.";
+
 							/**
-							*	> When a parameter is an array then it is a name value pair.
-							*	> The first element of the array is the name, and the second
-							*	> is the value. resolveParams only looks at the second element
-							*	> of the array. The first element is used by the caller.
+							*	When a parameter is an array then it is a name value pair.
+							*	The first element of the array is the name, and the second
+							*	is the value. resolveParams only looks at the second element
+							*	of the array. The first element is used by the caller.
 							*
 							*	```json
 							*
@@ -141,9 +135,11 @@
 						}
 					}
 				}
+
 				return params;
 			}
-			//noInfoPath.resolveParams = resolveParams.bind(this, $injector);
+
+			noInfoPath.resolveParams = resolveParams.bind(this, $injector);
 		}])
 	;
 })(angular);

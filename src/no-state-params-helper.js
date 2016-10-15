@@ -7,6 +7,8 @@
 		*	> Service Name: noStateHelper
 		*/
 		.service("noStateHelper", ["$injector", "$stateParams", function($injector, $stateParams){
+			var locals = {};
+
 			/**
 			*	### Methods
 			*
@@ -44,7 +46,7 @@
 						*	```json
 						*
 						*		{
-						*			"params:"" [
+						*			"params": [
 						*				["foo", 1000],
 						*				["bar", false],
 						*				"pid"
@@ -68,8 +70,8 @@
 				return returnObj;
 			};
 
-			this.makeStateParams = function(scope, params) {
-				var values = noInfoPath.resolveParams(params, scope),
+			this.makeStateParams = function(scope, el, params) {
+				var values = _resolveParams(params, scope, el),
 					results = {};
 
 				for(var i=0; i < params.length; i++) {
@@ -81,6 +83,12 @@
 						key = param[0];
 					}
 
+					if(angular.isObject(value)) {
+						if(!param.field) throw "Field property is required when value is an object.";
+
+						value = value[param.field];
+					}
+
 					results[key] = value;
 				}
 
@@ -89,7 +97,37 @@
 				return results;
 			};
 
-			function resolveParams($injector, taskParams, scope) {
+			locals.kendoRowData = function (scope, el, fields) {
+				var tr = el.closest("tr"),
+					grid = scope.noGrid,
+					data = grid.dataItem(tr);
+
+
+				return data;
+			};
+
+			function _resolveProvider(param, scope) {
+				var prov;
+
+				switch(param.provider) {
+					case "scope":
+						prov = scope;
+						break;
+
+					case "local":
+						prov = locals;
+						break;
+
+					default:
+						prov = $injector.get(param.provider);
+						break;
+
+				}
+
+				return prov;
+			}
+
+			function _resolveParams(taskParams, scope, el) {
 				var params = [];
 
 				if(taskParams) {
@@ -109,7 +147,7 @@
 							*	```json
 							*
 							*		{
-							*			"params:"" [
+							*			"params": [
 							*				["foo", 1000],
 							*				["bar", false],
 							*				"pid"
@@ -120,13 +158,14 @@
 							*/
 							params.push(param[1]);
 						} else if(angular.isObject(param)) {
-							var prov = param.provider === "scope" ? scope : $injector.get(param.provider),
+							var prov = _resolveProvider(param, scope),
 								meth = param.method ? prov[param.method] : undefined,
 								prop = param.property ? noInfoPath.getItem(prov, param.property) : undefined;
+
 							if(prop) {
 								params.push(prop);
 							} else if(meth) {
-								params.push(meth());
+								params.push(meth(scope, el));
 							} else {
 								params.push(prov);
 							}
@@ -139,7 +178,7 @@
 				return params;
 			}
 
-			noInfoPath.resolveParams = resolveParams.bind(this, $injector);
+			// noInfoPath.resolveParams = resolveParams.bind(this, $injector);
 		}])
 	;
 })(angular);

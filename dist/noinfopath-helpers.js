@@ -480,7 +480,7 @@ var noGeoMock;
 				}
 			}
 
-			function _resolveActionParams(scope, params){
+			function _resolveActionParams(scope, el, params){
 				var promises = [];
 
 				for(var p=0; p<params.length; p++){
@@ -493,15 +493,14 @@ var noGeoMock;
 							var prov = _resolveActionProvider(param),
 								method = prov ? prov[param.method] : undefined,
 								methparams = param.params,
-								property = param.property ? noInfoPath.getItem(prov, param.property) : undefined;
+								property = param.property ? noInfoPath.getItem(prov, param.property) : undefined,
+								tmpArgs = [];
 
 							if(method){
-								if(param.passLocalScope) {
-									promises.push($q.when(method(scope, methparams)));
-
-								} else {
-									promises.push($q.when(method(methparams)));
-								}
+								if(param.passLocalScope) tmpArgs.push(scope);
+								if(param.passElement) tmpArgs.push(el);
+								tmpArgs.push(methparams);
+								promises.push($q.when(method.apply(el, tmpArgs)));
 							}else if(property){
 								promises.push($q.when(property));
 							}else{
@@ -524,7 +523,7 @@ var noGeoMock;
 				return $q.when({method: angular.noop, params: params});
 			}
 
-			function _resolveActionMethodAndParams(scope, action){
+			function _resolveActionMethodAndParams(scope, el, action){
 				var prov = _resolveActionProvider(action) || scope,
 					prop = action.property ? noInfoPath.getItem(prov, action.property) : undefined,
 					method;
@@ -538,7 +537,7 @@ var noGeoMock;
 				//if(!method) method = _noop.bind(null, action);
 
 
-				return _resolveActionParams(scope, action.params || [])
+				return _resolveActionParams(scope, el, action.params || [])
 					.then(function(params){
 						return {provider: prov, property: prop, method: method ||  _noop.bind(null, action), params: params};
 					})
@@ -551,7 +550,7 @@ var noGeoMock;
 			function _createActionExecFunction(ctx, scope, el, action){
 				function actionExecFunction(ctx, scope, el, action){
 					return $q(function(resolve, reject){
-						_resolveActionMethodAndParams(scope, action)
+						_resolveActionMethodAndParams(scope, el, action)
 							.then(function(result){
 								var returnValue = result.method.apply(result.property ? result.property : ctx, action.noContextParams ? result.params : [ctx, scope, el].concat(result.params));
 
@@ -663,6 +662,8 @@ var noGeoMock;
 		*	> Service Name: noStateHelper
 		*/
 		.service("noStateHelper", ["$injector", "$stateParams", function($injector, $stateParams){
+			var locals = {};
+
 			/**
 			*	### Methods
 			*
@@ -700,7 +701,7 @@ var noGeoMock;
 						*	```json
 						*
 						*		{
-						*			"params:"" [
+						*			"params": [
 						*				["foo", 1000],
 						*				["bar", false],
 						*				"pid"
@@ -724,8 +725,8 @@ var noGeoMock;
 				return returnObj;
 			};
 
-			this.makeStateParams = function(scope, params) {
-				var values = noInfoPath.resolveParams(params, scope),
+			this.makeStateParams = function(scope, el, params) {
+				var values = _resolveParams(params, scope, el),
 					results = {};
 
 				for(var i=0; i < params.length; i++) {
@@ -737,6 +738,12 @@ var noGeoMock;
 						key = param[0];
 					}
 
+					if(angular.isObject(value)) {
+						if(!param.field) throw "Field property is required when value is an object.";
+
+						value = value[param.field];
+					}
+
 					results[key] = value;
 				}
 
@@ -745,7 +752,37 @@ var noGeoMock;
 				return results;
 			};
 
-			function resolveParams($injector, taskParams, scope) {
+			locals.kendoRowData = function (scope, el, fields) {
+				var tr = el.closest("tr"),
+					grid = scope.noGrid,
+					data = grid.dataItem(tr);
+
+
+				return data;
+			};
+
+			function _resolveProvider(param, scope) {
+				var prov;
+
+				switch(param.provider) {
+					case "scope":
+						prov = scope;
+						break;
+
+					case "local":
+						prov = locals;
+						break;
+
+					default:
+						prov = $injector.get(param.provider);
+						break;
+
+				}
+
+				return prov;
+			}
+
+			function _resolveParams(taskParams, scope, el) {
 				var params = [];
 
 				if(taskParams) {
@@ -765,7 +802,7 @@ var noGeoMock;
 							*	```json
 							*
 							*		{
-							*			"params:"" [
+							*			"params": [
 							*				["foo", 1000],
 							*				["bar", false],
 							*				"pid"
@@ -776,13 +813,14 @@ var noGeoMock;
 							*/
 							params.push(param[1]);
 						} else if(angular.isObject(param)) {
-							var prov = param.provider === "scope" ? scope : $injector.get(param.provider),
+							var prov = _resolveProvider(param, scope),
 								meth = param.method ? prov[param.method] : undefined,
 								prop = param.property ? noInfoPath.getItem(prov, param.property) : undefined;
+
 							if(prop) {
 								params.push(prop);
 							} else if(meth) {
-								params.push(meth());
+								params.push(meth(scope, el));
 							} else {
 								params.push(prov);
 							}
@@ -795,10 +833,11 @@ var noGeoMock;
 				return params;
 			}
 
-			noInfoPath.resolveParams = resolveParams.bind(this, $injector);
+			// noInfoPath.resolveParams = resolveParams.bind(this, $injector);
 		}])
 	;
 })(angular);
+
 /**
 *	## NoDocumentReadyService  (a/k/a noDocumentReady)
 *

@@ -53,7 +53,7 @@
 				}
 			}
 
-			function _resolveActionParams(scope, params){
+			function _resolveActionParams(scope, el, params){
 				var promises = [];
 
 				for(var p=0; p<params.length; p++){
@@ -66,15 +66,14 @@
 							var prov = _resolveActionProvider(param),
 								method = prov ? prov[param.method] : undefined,
 								methparams = param.params,
-								property = param.property ? noInfoPath.getItem(prov, param.property) : undefined;
+								property = param.property ? noInfoPath.getItem(prov, param.property) : undefined,
+								tmpArgs = [];
 
 							if(method){
-								if(param.passLocalScope) {
-									promises.push($q.when(method(scope, methparams)));
-
-								} else {
-									promises.push($q.when(method(methparams)));
-								}
+								if(param.passLocalScope) tmpArgs.push(scope);
+								if(param.passElement) tmpArgs.push(el);
+								tmpArgs.push(methparams);
+								promises.push($q.when(method.apply(el, tmpArgs)));
 							}else if(property){
 								promises.push($q.when(property));
 							}else{
@@ -97,7 +96,7 @@
 				return $q.when({method: angular.noop, params: params});
 			}
 
-			function _resolveActionMethodAndParams(scope, action){
+			function _resolveActionMethodAndParams(scope, el, action){
 				var prov = _resolveActionProvider(action) || scope,
 					prop = action.property ? noInfoPath.getItem(prov, action.property) : undefined,
 					method;
@@ -111,7 +110,7 @@
 				//if(!method) method = _noop.bind(null, action);
 
 
-				return _resolveActionParams(scope, action.params || [])
+				return _resolveActionParams(scope, el, action.params || [])
 					.then(function(params){
 						return {provider: prov, property: prop, method: method ||  _noop.bind(null, action), params: params};
 					})
@@ -124,7 +123,7 @@
 			function _createActionExecFunction(ctx, scope, el, action){
 				function actionExecFunction(ctx, scope, el, action){
 					return $q(function(resolve, reject){
-						_resolveActionMethodAndParams(scope, action)
+						_resolveActionMethodAndParams(scope, el, action)
 							.then(function(result){
 								var returnValue = result.method.apply(result.property ? result.property : ctx, action.noContextParams ? result.params : [ctx, scope, el].concat(result.params));
 

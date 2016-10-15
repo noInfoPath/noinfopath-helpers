@@ -120,7 +120,7 @@ is the value.
 ```json
 
 	{
-		"params:"" [
+		"params": [
 			["foo", 1000],
 			["bar", false],
 			"pid"
@@ -140,7 +140,7 @@ of the array. The first element is used by the caller.
 ```json
 
 	{
-		"params:"" [
+		"params": [
 			["foo", 1000],
 			["bar", false],
 			"pid"

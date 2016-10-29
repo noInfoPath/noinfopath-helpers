@@ -6,7 +6,16 @@ module.exports = function (grunt) {
 		pkg: grunt.file.readJSON('package.json'),
 		concat: {
 			dist: {
-				src: ['src/noinfopath-helpers.js', 'src/noinfopath-filters.js', 'src/noinfopath-navigator.js', 'src/no-action-queue.js', 'src/no-state-params-helper.js', 'src/docready.js', 'src/print.js'],
+				src: [
+					'src/noinfopath-helpers.js',
+					'src/noinfopath-filters.js',
+					'src/noinfopath-navigator.js',
+					'src/no-action-queue.js',
+					'src/no-state-params-helper.js',
+					'src/docready.js',
+					'src/print.js',
+					'src/no-parameters.js'
+				],
 				dest: 'dist/noinfopath-helpers.js'
 			},
 			readme: {

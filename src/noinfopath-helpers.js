@@ -261,5 +261,24 @@
 
 			return obj;
 		};
-		}]);
+		}])
+
+
+	.service("noScopeHelper", ["$parse", function ($parse) {
+		function _setItem(store, key, value) {
+			var getter = $parse(key),
+				setter = getter.assign;
+
+			setter(store, value);
+		}
+		this.setItem = _setItem;
+
+		function _getItem(store, key) {
+			var getter = $parse(key);
+			return getter(store);
+		}
+		this.getItem = _getItem;
+	}])
+
+	;
 })(angular);

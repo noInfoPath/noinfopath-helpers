@@ -26,7 +26,7 @@
 		*
 		*
 		*/
-		.service("noActionQueue", ["$injector", "$q", function($injector, $q) {
+		.service("noActionQueue", ["$injector", "$q", "noParameters", function($injector, $q, noParameters) {
 			function _recurse(deferred, results, execQueue, i){
 				var action = execQueue[i];
 				if(action){
@@ -61,11 +61,16 @@
 
 					if(angular.isObject(param)){
 						if(param.provider === "scope"){
-							promises.push($q.when(noInfoPath.getItem(scope, param.property)));
+							if(param.property) {
+								promises.push($q.when(noInfoPath.getItem(scope, param.property)));
+							} else {
+								promises.push(scope);
+								
+							}
 						}else if(param.provider){
 							var prov = _resolveActionProvider(param),
 								method = prov ? prov[param.method] : undefined,
-								methparams = param.params,
+								methparams = param.params || [],
 								property = param.property ? noInfoPath.getItem(prov, param.property) : undefined,
 								tmpArgs = [];
 
@@ -108,15 +113,19 @@
 				}
 
 				//if(!method) method = _noop.bind(null, action);
+				if(action.params) {
+					return _resolveActionParams(scope, el, action.params || [])
+						.then(function(params){
+							return {provider: prov, property: prop, method: method ||  _noop.bind(null, action), params: params};
+						})
+						.catch(function(err){
+							console.error(err);
+						});
+				} else {
+					return $q.when({provider: prov, property: prop, method: method ||  _noop.bind(null, action)});
+				}
 
 
-				return _resolveActionParams(scope, el, action.params || [])
-					.then(function(params){
-						return {provider: prov, property: prop, method: method ||  _noop.bind(null, action), params: params};
-					})
-					.catch(function(err){
-						console.error(err);
-					});
 
 			}
 

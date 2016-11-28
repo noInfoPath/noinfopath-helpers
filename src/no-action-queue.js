@@ -65,7 +65,7 @@
 								promises.push($q.when(noInfoPath.getItem(scope, param.property)));
 							} else {
 								promises.push(scope);
-								
+
 							}
 						}else if(param.provider){
 							var prov = _resolveActionProvider(param),

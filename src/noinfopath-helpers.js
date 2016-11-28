@@ -5,7 +5,7 @@
  *
  *	> `Module Name: noinfopath.helpers`
  *
- *	> @version 2.0.11
+ *	> @version 2.0.12
  *
  *  ## Installation
  *      npm install noinfopath-helpers --save

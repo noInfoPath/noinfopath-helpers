@@ -5,7 +5,7 @@
  *
  *	> `Module Name: noinfopath.helpers`
  *
- *	> @version 2.0.11
+ *	> @version 2.0.12
  *
  *  ## Installation
  *      npm install noinfopath-helpers --save
@@ -511,7 +511,7 @@ var noGeoMock;
 								promises.push($q.when(noInfoPath.getItem(scope, param.property)));
 							} else {
 								promises.push(scope);
-								
+
 							}
 						}else if(param.provider){
 							var prov = _resolveActionProvider(param),

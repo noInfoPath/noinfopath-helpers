@@ -5,7 +5,7 @@
  *
  *	> `Module Name: noinfopath.helpers`
  *
- *	> @version 2.0.13
+ *	> @version 2.0.14
  *
  *  ## Installation
  *      npm install noinfopath-helpers --save
@@ -479,7 +479,7 @@ var noGeoMock;
 					action()
 					.then(function(deferred, results, execQueue, i, data){
 						results[i] = data;
-						console.log("execAction finished", i);
+						//console.log("execAction finished", i);
 						_recurse(deferred, results, execQueue, ++i);
 					}.bind(null, deferred, results, execQueue, i))
 					.catch(function(err){

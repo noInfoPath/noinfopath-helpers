@@ -92,7 +92,7 @@
 					results[key] = value;
 				}
 
-				console.log("makeStateParams", results);
+				//console.log("makeStateParams", results);
 
 				return results;
 			};

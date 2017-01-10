@@ -5,6 +5,8 @@
 
 		this.getHiddenPrintWindow = function (url) {
 			oHiddFrame.css("display", "none");
+			// oHiddFrame.css("width", "100%");
+			// oHiddFrame.css("height", "11in");
 			$("body").append(oHiddFrame);
 			oHiddFrame[0].src = url;
 

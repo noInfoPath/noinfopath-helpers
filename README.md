@@ -2,7 +2,7 @@
 
 > `Module Name: noinfopath.helpers`
 
-> @version 2.0.15
+> @version 2.0.16
 
  ## Installation
      npm install noinfopath-helpers --save
@@ -170,4 +170,10 @@ running total increases and decrease with out errors. The promise will
 resolve when the doucment reduces to zero.
 
 
+
+## NoAreaLoaderService
+
+The purpose of this services it to keep track of the async loading of all
+noInfoPath components. The idea is to mitigate issues with ngFormControllers
+being set to dirty while an area is loading.
 

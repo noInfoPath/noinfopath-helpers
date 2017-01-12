@@ -14,7 +14,8 @@ module.exports = function (grunt) {
 					'src/no-state-params-helper.js',
 					'src/docready.js',
 					'src/print.js',
-					'src/no-parameters.js'
+					'src/no-parameters.js',
+					'src/area-loader.js'
 				],
 				dest: 'dist/noinfopath-helpers.js'
 			},

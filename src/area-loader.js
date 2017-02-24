@@ -7,16 +7,42 @@
 */
 
 (function (angular, undefined) {
-	function NoAreaLoaderService($rootScope) {
+	function NoAreaLoaderService($rootScope, noFormConfig, noPrompt, _) {
 		if(!$rootScope.areas) $rootScope.areas = {};
 
 		function _registerArea(areaName, cb) {
-			if(!$rootScope.areas[areaName]) $rootScope.areas[areaName] = {};
+			//var config = noInfoPath.getItem(noConfig.current, areaName);
+			var area = noFormConfig.getFormByRoute(areaName),
+				components = noInfoPath.getItem(area, "noForm.noComponents"),
+				registerables = {},
+				nestedGrids = [],
+				safeName = areaName.replace(/\./g, "_");
 
-			$rootScope.areas[areaName] = {};
+			for(var c in components) {
+				var component = components[c];
 
-			$rootScope.$watchCollection("areas." + areaName + "components", function(areaName, n, o, s){
+				if(component.noKendoGrid) registerables[c] = false;
+
+				if(component.noDataPanel) registerables[c] = false;
+
+				if(component.noGrid && component.noGrid.nestedGrid) {
+					nestedGrids.push(component.noGrid.nestedGrid.noForm.split(".")[2]);
+				}
+
+			}
+
+			nestedGrids.forEach(function(e){
+				delete registerables[e];
+			});
+
+
+			$rootScope.areas[safeName] = registerables;
+
+			$rootScope.$watchCollection("areas." + safeName, function(safeName, n, o, s){
 				var done = true;
+
+
+				//console.log("areas." + safeName, n);
 
 				for(var k in n) {
 					var c = n[k];
@@ -27,26 +53,31 @@
 				}
 
 				if(done) {
-					console.log("noAreaLoader::areaReady", areaName);
-					$rootScope.$broadcast("noAreaLoader::areaReady", areaName);
+					console.log("noAreaLoader::areaReady", safeName);
+					noPrompt.hide(1000);
+					$rootScope.$broadcast("noAreaLoader::areaReady", safeName);
 				}
 
-			}.bind(null, areaName));
+			}.bind(null, safeName));
+
+			return _.size(registerables);
 		}
 		this.registerArea = _registerArea;
 
 		function _loading(areaName, compName) {
-			$rootScope.areas[areaName][compName] = false; //Means that the component is not loaded.
+			//console.log("noAreaLoader::loading", compName);
+			$rootScope.areas[areaName.replace(/\./g, "_")][compName.split(".")[2]] = false; //Means that the component is not loaded.
 		}
 		this.markComponentLoading = _loading;
 
 		function _loaded(areaName, compName) {
-			$rootScope.areas[areaName][compName] = true; //Means that the component is loaded.
+			//console.log("noAreaLoader::loaded", compName);
+			$rootScope.areas[areaName.replace(/\./g, "_")][compName.split(".")[2]] = true; //Means that the component is loaded.
 		}
 		this.markComponentLoaded = _loaded;
 	}
 
 	angular.module("noinfopath.helpers")
-		.service("noAreaLoader", ["$rootScope", NoAreaLoaderService])
+		.service("noAreaLoader", ["$rootScope", "noFormConfig", "noPrompt", "lodash", NoAreaLoaderService])
 		;
 })(angular);

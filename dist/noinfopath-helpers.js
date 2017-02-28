@@ -318,6 +318,12 @@
 					return input ? input : "";
 				};
 			})
+
+			.filter("tostring", function () {
+				return function (input, pattern) {
+					return kendo.toString(input, pattern);
+				};
+			})
 		;
 
 })(angular);

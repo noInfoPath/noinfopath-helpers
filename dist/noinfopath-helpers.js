@@ -5,7 +5,7 @@
  *
  *	> `Module Name: noinfopath.helpers`
  *
- *	> @version 2.0.18
+ *	> @version 2.0.19
  *
  *  ## Installation
  *      npm install noinfopath-helpers --save
@@ -1100,9 +1100,11 @@ var noGeoMock;
 			});
 
 
-			$rootScope.areas[safeName] = registerables;
+			$rootScope.areas[safeName] = {
+				registerables: registerables
+			};
 
-			$rootScope.$watchCollection("areas." + safeName, function(safeName, n, o, s){
+			$rootScope.areas[safeName].unWatch = $rootScope.$watchCollection("areas." + safeName + "registerables", function(safeName, n, o, s){
 				var done = true;
 
 
@@ -1124,19 +1126,25 @@ var noGeoMock;
 
 			}.bind(null, safeName));
 
-			return _.size(registerables);
+			return _.size($rootScope.areas[safeName].registerables);
 		}
 		this.registerArea = _registerArea;
 
+		function _unRegisterArea(areaName) {
+			var tmp = $rootScope.areas[areaName.replace(/\./g, "_")];
+			if(tmp && tmp.unWatch) tmp.unWatch();
+		}
+		this.unRegisterArea = _unRegisterArea;
+
 		function _loading(areaName, compName) {
 			//console.log("noAreaLoader::loading", compName);
-			$rootScope.areas[areaName.replace(/\./g, "_")][compName.split(".")[2]] = false; //Means that the component is not loaded.
+			$rootScope.areas[areaName.replace(/\./g, "_")].registerables[compName.split(".")[2]] = false; //Means that the component is not loaded.
 		}
 		this.markComponentLoading = _loading;
 
 		function _loaded(areaName, compName) {
 			//console.log("noAreaLoader::loaded", compName);
-			$rootScope.areas[areaName.replace(/\./g, "_")][compName.split(".")[2]] = true; //Means that the component is loaded.
+			$rootScope.areas[areaName.replace(/\./g, "_")].registerables[compName.split(".")[2]] = true; //Means that the component is loaded.
 		}
 		this.markComponentLoaded = _loaded;
 	}

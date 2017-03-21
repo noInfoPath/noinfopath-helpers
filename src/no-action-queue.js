@@ -30,15 +30,18 @@
 			function _recurse(deferred, results, execQueue, i){
 				var action = execQueue[i];
 				if(action){
+					deferred.notify({state: "noActionQueue", current: i,  total: execQueue.length});
 					action()
-					.then(function(deferred, results, execQueue, i, data){
-						results[i] = data;
-						//console.log("execAction finished", i);
-						_recurse(deferred, results, execQueue, ++i);
-					}.bind(null, deferred, results, execQueue, i))
-					.catch(function(err){
-						deferred.reject(err);
-					});
+						.then(function(deferred, results, execQueue, i, data){
+							results[i] = data;
+
+							deferred.notify({state: "end", current: i,  total: execQueue.length});
+							//console.log("execAction finished", i);
+							_recurse(deferred, results, execQueue, ++i);
+						}.bind(null, deferred, results, execQueue, i))
+						.catch(function(err){
+							deferred.reject(err);
+						});
 				}else {
 					deferred.resolve(results);
 				}

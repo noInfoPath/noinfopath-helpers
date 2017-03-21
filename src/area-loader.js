@@ -10,13 +10,31 @@
 	function NoAreaLoaderService($rootScope, noFormConfig, noPrompt, _) {
 		if(!$rootScope.areas) $rootScope.areas = {};
 
+
+		function _safeName(inName) {
+			return inName.replace(/(\W|\s)/g, "_");
+		}
+
+		function _resolveComponentName(compName) {
+			if(!compName) console.trace();
+
+			var parts = compName.split(".");
+
+			if(parts.length > 0) {
+				return parts[parts.length-1];
+			} else {
+				return _safeName(compName);
+			}
+		}
+
 		function _registerArea(areaName, cb) {
 			//var config = noInfoPath.getItem(noConfig.current, areaName);
 			var area = noFormConfig.getFormByRoute(areaName),
 				components = noInfoPath.getItem(area, "noForm.noComponents"),
 				registerables = {},
-				nestedGrids = [],
-				safeName = areaName.replace(/\./g, "_");
+				nestedGrids = [];
+
+			areaName = _safeName(areaName);
 
 			for(var c in components) {
 				var component = components[c];
@@ -26,7 +44,7 @@
 				if(component.noDataPanel) registerables[c] = false;
 
 				if(component.noGrid && component.noGrid.nestedGrid) {
-					nestedGrids.push(component.noGrid.nestedGrid.noForm.split(".")[2]);
+					nestedGrids.push(_resolveComponentName(component.noGrid.nestedGrid.noForm));
 				}
 
 			}
@@ -36,51 +54,58 @@
 			});
 
 
-			$rootScope.areas[safeName] = {
+			$rootScope.areas[areaName] = {
 				registerables: registerables
 			};
 
-			$rootScope.areas[safeName].unWatch = $rootScope.$watchCollection("areas." + safeName + "registerables", function(safeName, n, o, s){
-				var done = true;
+			$rootScope.areas[areaName].unWatch = $rootScope.$watchCollection("areas." + areaName + ".registerables", function(safeName, n, o, s){
+				var done = true, str = "", ok = 0, t = _.size(n);
 
+				if(n && t > 0) {
+					for(var k in n) {
+						var c = n[k];
+						str += "\t" + k + ": " + c + "\n";
+						if(c) ok++;
+					}
 
-				//console.log("areas." + safeName, n);
+					done = ok === t;
 
-				for(var k in n) {
-					var c = n[k];
+					if(done) {
+						console.log("noAreaLoader::Complete", safeName);
+						noPrompt.hide(500);
+						console.warn("Deprecating noAreaLoader::areaReady in a future release. Use noAreaLoader::Complete instead");
+						$rootScope.$broadcast("noAreaLoader::areaReady", safeName);
+						$rootScope.$broadcast("noAreaLoader::Complete", safeName);
+					}
 
-					done = done & c;
-
-					if(!done) break;
+					console.log("noAreaCheck\n", str);
+				} else {
+					console.log("noAreaLoader::Complete", safeName);
+					console.warn("This area has no componets to track.");
 				}
 
-				if(done) {
-					console.log("noAreaLoader::areaReady", safeName);
-					noPrompt.hide(1000);
-					$rootScope.$broadcast("noAreaLoader::areaReady", safeName);
-				}
 
-			}.bind(null, safeName));
+			}.bind(null, areaName));
 
-			return _.size($rootScope.areas[safeName].registerables);
+			return _.size($rootScope.areas[areaName].registerables);
 		}
 		this.registerArea = _registerArea;
 
 		function _unRegisterArea(areaName) {
-			var tmp = $rootScope.areas[areaName.replace(/\./g, "_")];
+			var tmp = $rootScope.areas[_safeName(areaName)];
 			if(tmp && tmp.unWatch) tmp.unWatch();
 		}
 		this.unRegisterArea = _unRegisterArea;
 
 		function _loading(areaName, compName) {
 			//console.log("noAreaLoader::loading", compName);
-			$rootScope.areas[areaName.replace(/\./g, "_")].registerables[compName.split(".")[2]] = false; //Means that the component is not loaded.
+			$rootScope.areas[_safeName(areaName)].registerables[_resolveComponentName(compName)] = false; //Means that the component is not loaded.
 		}
 		this.markComponentLoading = _loading;
 
 		function _loaded(areaName, compName) {
-			//console.log("noAreaLoader::loaded", compName);
-			$rootScope.areas[areaName.replace(/\./g, "_")].registerables[compName.split(".")[2]] = true; //Means that the component is loaded.
+			console.info("noAreaLoader::component", compName, "loaded");
+			$rootScope.areas[_safeName(areaName)].registerables[_resolveComponentName(compName)] = true; //Means that the component is loaded.
 		}
 		this.markComponentLoaded = _loaded;
 	}

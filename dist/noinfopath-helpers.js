@@ -5,7 +5,7 @@
  *
  *	> `Module Name: noinfopath.helpers`
  *
- *	> @version 2.0.20
+ *	> @version 2.0.21
  *
  *  ## Installation
  *      npm install noinfopath-helpers --save
@@ -1106,7 +1106,12 @@ var noGeoMock;
 			for(var c in components) {
 				var component = components[c];
 
-				if(component.noKendoGrid) registerables[c] = false;
+				if(component.noKendoGrid)
+				{
+					if(!component.noGrid || !component.noGrid.skipAreaRegistration) {
+						registerables[c] = false;
+					}
+				}
 
 				if(component.noDataPanel) registerables[c] = false;
 
@@ -1145,7 +1150,7 @@ var noGeoMock;
 						$rootScope.$broadcast("noAreaLoader::Complete", safeName);
 					}
 
-					console.log("noAreaCheck\n", str);
+					//console.log("noAreaCheck\n", str);
 				} else {
 					console.log("noAreaLoader::Complete", safeName);
 					console.warn("This area has no componets to track.");
@@ -1172,7 +1177,9 @@ var noGeoMock;
 
 		function _loaded(areaName, compName) {
 			console.info("noAreaLoader::component", compName, "loaded");
-			$rootScope.areas[_safeName(areaName)].registerables[_resolveComponentName(compName)] = true; //Means that the component is loaded.
+			var comp = $rootScope.areas[_safeName(areaName)].registerables[_resolveComponentName(compName)];
+			if(comp !== undefined)
+				$rootScope.areas[_safeName(areaName)].registerables[_resolveComponentName(compName)] = true; //Means that the component is loaded.
 		}
 		this.markComponentLoaded = _loaded;
 	}

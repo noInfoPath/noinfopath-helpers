@@ -5,7 +5,7 @@
  *
  *	> `Module Name: noinfopath.helpers`
  *
- *	> @version 2.0.21
+ *	> @version 2.0.22
  *
  *  ## Installation
  *      npm install noinfopath-helpers --save
@@ -1176,7 +1176,7 @@ var noGeoMock;
 		this.markComponentLoading = _loading;
 
 		function _loaded(areaName, compName) {
-			console.info("noAreaLoader::component", compName, "loaded");
+			//console.info("noAreaLoader::component", compName, "loaded");
 			var comp = $rootScope.areas[_safeName(areaName)].registerables[_resolveComponentName(compName)];
 			if(comp !== undefined)
 				$rootScope.areas[_safeName(areaName)].registerables[_resolveComponentName(compName)] = true; //Means that the component is loaded.

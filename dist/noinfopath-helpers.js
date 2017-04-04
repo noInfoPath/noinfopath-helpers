@@ -5,7 +5,7 @@
  *
  *	> `Module Name: noinfopath.helpers`
  *
- *	> @version 2.0.23
+ *	> @version 2.0.24
  *
  *  ## Installation
  *      npm install noinfopath-helpers --save
@@ -776,7 +776,7 @@ var noGeoMock;
 					}
 
 					if(angular.isObject(value)) {
-						if(!param.field) throw "Field property is required when value is an object.";
+						if(!param.field) throw new Error("Field property is required when value is an object.");
 
 						value = value[param.field];
 					}

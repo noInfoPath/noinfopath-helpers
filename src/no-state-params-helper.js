@@ -84,7 +84,7 @@
 					}
 
 					if(angular.isObject(value)) {
-						if(!param.field) throw "Field property is required when value is an object.";
+						if(!param.field) throw new Error("Field property is required when value is an object.");
 
 						value = value[param.field];
 					}

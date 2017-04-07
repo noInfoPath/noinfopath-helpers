@@ -5,7 +5,7 @@
  *
  *	> `Module Name: noinfopath.helpers`
  *
- *	> @version 2.0.24
+ *	> @version 2.0.25
  *
  *  ## Installation
  *      npm install noinfopath-helpers --save
@@ -1408,7 +1408,15 @@ var noGeoMock;
 		*	### @method getSelectedGridRow
 		*/
 		function _getSelectedGridRow(grid) {
-			return grid.select();
+			var row;
+			try {
+				row = grid.select();
+			}
+			catch(err) {
+				row = [];
+			}
+
+			return row;
 		}
 		this.getSelectedGridRow = _getSelectedGridRow;
 
@@ -1455,7 +1463,7 @@ var noGeoMock;
 		*/
 		this.changeRowNavBar = function(ctx, scope, el, gridScopeId, navBarName, barid) {
 			var grid = scope[gridScopeId],
-				tr = _resolveCurrentNavigationRow(grid, el),
+				tr = _resolveCurrentNavigationRow(grid, el), 
 				uid = noInfoPath.toScopeSafeGuid(_getGridRowUID(tr)),
 				barkey = navBarName + "_" + uid,
 				scopeKey = "noNavigation." + barkey + ".currentNavBar";

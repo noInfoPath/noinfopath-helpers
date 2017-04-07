@@ -217,7 +217,15 @@
 		*	### @method getSelectedGridRow
 		*/
 		function _getSelectedGridRow(grid) {
-			return grid.select();
+			var row;
+			try {
+				row = grid.select();
+			}
+			catch(err) {
+				row = [];
+			}
+
+			return row;
 		}
 		this.getSelectedGridRow = _getSelectedGridRow;
 
@@ -264,7 +272,7 @@
 		*/
 		this.changeRowNavBar = function(ctx, scope, el, gridScopeId, navBarName, barid) {
 			var grid = scope[gridScopeId],
-				tr = _resolveCurrentNavigationRow(grid, el),
+				tr = _resolveCurrentNavigationRow(grid, el), 
 				uid = noInfoPath.toScopeSafeGuid(_getGridRowUID(tr)),
 				barkey = navBarName + "_" + uid,
 				scopeKey = "noNavigation." + barkey + ".currentNavBar";

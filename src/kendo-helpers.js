@@ -405,7 +405,22 @@
 				return value;
 			},
 			"timepicker": function(valueObj) {
-				var value = valueObj && valueObj.toLocaleTimeString ? valueObj.toLocaleTimeString() : "";
+				var value;
+
+				// Test to see if we have a value
+				if(valueObj){
+					// If it's a JS Date
+					if(valueObj.toLocaleTimeString) {
+						value = valueObj.toLocaleTimeString();
+						// Else make it a JS date
+					} else {
+						value = new Date(valueObj).toLocaleTimeString();
+					}
+					// If we have no value, return empty string.
+				} else {
+					value = ""
+				}
+
 				return value;
 			}
 		},

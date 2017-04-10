@@ -5,7 +5,7 @@
  *
  *	> `Module Name: noinfopath.helpers`
  *
- *	> @version 2.0.26
+ *	> @version 2.0.27
  *
  *  ## Installation
  *      npm install noinfopath-helpers --save
@@ -1216,7 +1216,7 @@ var noGeoMock;
 
 			this.changeRowNavBar(ctx, scope, nonav, gridName, navBarName, barid);
 
-			this.changeRowNavBarWatch(ctx, scope, nonav, barid, barid, scope)
+			this.changeRowNavBarWatch(ctx, scope, nonav, barid, barid, scope);
 
 		}
 		this.newRow = _newRow.bind(this);
@@ -1232,7 +1232,7 @@ var noGeoMock;
 
 			this.changeRowNavBar(ctx, scope, el, gridName, navBarName, barid);
 
-			this.changeRowNavBarWatch(ctx, scope, el, barid, barid, scope)
+			this.changeRowNavBarWatch(ctx, scope, el, barid, barid, scope);
 
 		}
 		this.editRow = _editRow.bind(this);
@@ -1252,7 +1252,7 @@ var noGeoMock;
 
 			this.changeRowNavBar(ctx, scope, el, gridName, navBarName, barid);
 
-			this.changeRowNavBarWatch(ctx, scope, el, barid, barid, scope)
+			this.changeRowNavBarWatch(ctx, scope, el, barid, barid, scope);
 
 		}
 		this.cancelRow = _cancelRow.bind(this);

@@ -272,7 +272,7 @@
 		*/
 		this.changeRowNavBar = function(ctx, scope, el, gridScopeId, navBarName, barid) {
 			var grid = scope[gridScopeId],
-				tr = _resolveCurrentNavigationRow(grid, el), 
+				tr = _resolveCurrentNavigationRow(grid, el),
 				uid = noInfoPath.toScopeSafeGuid(_getGridRowUID(tr)),
 				barkey = navBarName + "_" + uid,
 				scopeKey = "noNavigation." + barkey + ".currentNavBar";
@@ -332,7 +332,7 @@
 		var editors = {
 			text: function (scope, def, options) {
 				// create an input element
-				var input = $("<input/>");
+				var input = $("<input class=\"full-width\"/>");
 
 				// set its name to the field to which the column is bound ('name' in this case)
 				input.attr("name", options.field);

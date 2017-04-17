@@ -18,11 +18,13 @@ module.exports = function(config) {
         'node_modules/jasmine-ajax/lib/mock-ajax.js',
         'node_modules/angular/angular.js',
         'node_modules/angular-mocks/angular-mocks.js',
-        'test/mocks/*.*',
-        'test/*.spec.js',
-        'src/noinfopath-filters.js',
         'src/noinfopath-helpers.js',
-        'src/noinfopath-navigator.js'       
+        // 'src/noinfopath-filters.js',
+        // 'src/noinfopath-navigator.js',
+        'src/address-parser.js',
+        // 'test/mocks/*.*',
+        // 'test/*.spec.js'
+        'test/address-parser.spec.js'
     ],
 
 
@@ -36,7 +38,7 @@ module.exports = function(config) {
     preprocessors: {
         'src/*.js': 'coverage'
     },
-    
+
     coverageReporter: {
         type: 'cobertura',
         dir: 'coverage/'
@@ -67,7 +69,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['PhantomJS'],
+    browsers: ['Chrome'],
 
 
     // Continuous Integration mode

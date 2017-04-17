@@ -1,6 +1,6 @@
 (function(angular, undefined){
 	"use strict";
-	
+
 	function NoAddressParser() {
 		this.parseAddress = function(address){
 			var record = {},
@@ -91,8 +91,6 @@
 						name2Array.push(parsedAddress[rem].trim());
 					}
 					record.name2 = name2Array.join(", ");
-
-					console.log(record.name2);
 				}
 			}
 

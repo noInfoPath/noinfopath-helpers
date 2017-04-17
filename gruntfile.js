@@ -16,7 +16,8 @@ module.exports = function (grunt) {
 					'src/print.js',
 					'src/no-parameters.js',
 					'src/area-loader.js',
-					'src/kendo-helpers.js'
+					'src/kendo-helpers.js',
+					'src/address-parser.js'
 				],
 				dest: 'dist/noinfopath-helpers.js'
 			},

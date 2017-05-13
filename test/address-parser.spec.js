@@ -66,7 +66,7 @@ var tests = [
 		}
 	},
 	{
-		raw: "Fort Worth InterBank (Banking Records)\n4255 Camp Bowie Boulevard\nFort Worth, TX 76107",
+		raw: "Fort Worth InterBank (Banking Records)\n4255 Camp Bowie Boulevard\nFort Worth, TX. 76107",
 		expected: {
 			city: 'Fort Worth',
   		state: 'TX',
@@ -98,7 +98,7 @@ var tests = [
 		}
 	},
 	{
-		raw: "Avalon Memory Care (Billing Records),7140 U.S. 287 Frontage Road,Arlington, TX 76001",
+		raw: "Avalon Memory Care (Billing Records),7140 U.S. 287 Frontage Road,Arlington, TX. 76001",
 		expected: {
 			city: 'Arlington',
   		state: 'TX',
@@ -108,7 +108,7 @@ var tests = [
 		}
 	},
 	{
-		raw: "Avalon Memory Care (Radiology Records),7140 U.S. 287 Frontage Road,Arlington, TX 76001",
+		raw: "Avalon Memory Care (Radiology Records),7140 U.S. 287 Frontage Road,Arlington, TX. 76001",
 		expected: {
 			city: 'Arlington',
   		state: 'TX',

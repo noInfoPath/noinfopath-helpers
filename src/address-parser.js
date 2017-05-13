@@ -10,6 +10,11 @@
 				var completedLines = 0;
 
 				parsedAddress = parsedAddress[0].trim().split(',');
+
+				if(parsedAddress.length < 2) {
+					return;
+				}
+
 				commaParseCityStateZip();
 				commaParseAddress();
 				commaParseName();
@@ -24,11 +29,21 @@
 			}
 
 			function newLineParseCityStateZip(){
-				var cityStateZip = parsedAddress[parsedAddress.length - 1].match(/([a-zA-Z]+\s*[a-zA-Z]{3,20})\s?,?\s?([a-zA-Z]{2})?\s?(\d{5}?)?/);
-				record.city = cityStateZip[1];
-				record.state = cityStateZip[2];
-				record.zip = cityStateZip[3];
+				var cityStateZip = parsedAddress[parsedAddress.length - 1].trim().split(',');
+
+				if(cityStateZip.length == 2){
+					record.city = cityStateZip[0];
+
+					var temp = cityStateZip[1].trim().split(' ');
+					record.state = temp[0].substr(0,2);
+					record.zip = temp[1];
+				} else {
+					record.city = cityStateZip[0].replace(',', '');
+					record.state = cityStateZip[1].substr(0,2);
+					record.zip = cityStateZip[2];
+				}
 			}
+
 			function newLineParseAddress(){
 				var rawAddress = parsedAddress[parsedAddress.length - 2].split(',');
 
@@ -52,7 +67,8 @@
 
 			function commaParseCityStateZip(){
 				var stateZip = parsedAddress[parsedAddress.length - 1].trim().split(' ');
-				record.state = stateZip[0];
+
+				record.state = stateZip[0].substr(0,2);
 				record.zip = stateZip[1];
 				record.city = parsedAddress[parsedAddress.length - 2].trim();
 
@@ -66,7 +82,7 @@
 					var remaining = (parsedAddress.length - 2) - (l + 1);
 
 					// If there is any remaining, there is another line before we get to city/state/zip and need to put that line as address2
-					if(remaining == 0){
+					if(remaining === 0){
 						record.address1 = line;
 
 						completedLines = completedLines + 1;
@@ -98,7 +114,7 @@
 				return !Number.isNaN(Number(i)) && i !== null;
 			}
 		};
-	};
+	}
 
 	angular.module("noinfopath.helpers")
 		.service("noAddressParser", [NoAddressParser])

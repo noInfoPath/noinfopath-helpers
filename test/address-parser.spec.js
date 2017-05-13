@@ -196,6 +196,25 @@ var tests = [
   		name1: 'RBC Wealth Management (Banking Records)'
 		}
 	},
+	{
+		raw: "100 Crescent Court, Suite 1500,Dallas, TX 75201",
+		expected: {
+			city: 'Dallas',
+  		state: 'TX',
+  		zip: '75201',
+  		address1: '100 Crescent Court',
+			address2: 'Suite 1500'
+		}
+	},
+	{
+		raw: "4255 Camp Bowie Boulevard\nFort Worth, TX. 76107",
+		expected: {
+			city: 'Fort Worth',
+  		state: 'TX',
+  		zip: '76107',
+  		address1: '4255 Camp Bowie Boulevard'
+		}
+	}
 ];
 
 describe("Testing address parser", function(){

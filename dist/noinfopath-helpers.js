@@ -1203,7 +1203,7 @@ var noGeoMock;
 	*	> NOTE: A future enhancements will be that it allows for multi-row selection,
 	*	> and cell slections.
 	*/
-	function NoKendoHelpersService($injector, $compile, $q, $state) {
+	function NoKendoHelpersService($injector, $compile, $q, $state, _) {
 		function _newRow(ctx, scope, el, gridName, navBarName) {
 			var grid = scope[gridName],
 				nonav,
@@ -1516,7 +1516,54 @@ var noGeoMock;
 		}
 		this.ngCompileSelectedRow = _ngCompileRow;
 
+		function _addBlankOption(ctx, scope, el, def) {
+			// ctx is the result set for the dropdown.
+			var blank = {},
+				emptyArray = [],
+				res;
 
+			// Need to mock a def record
+			blank[def.TextField] = "";
+			blank[def.SaveColumn] = null;
+			blank[def.ValueField] = null;
+			blank[def.SortField] = null;
+
+			emptyArray.push(blank);
+			res = new noInfoPath.data.NoResults(emptyArray.concat(ctx.paged));
+
+			return res;
+		}
+		this.addBlankOption = _addBlankOption;
+
+		function _validateAndSave(ctx, scope, el, row) {
+			var schema = _getGridSchema(ctx, scope, el),
+				valid = true,
+				rowData = _.find(scope.noGrid.dataSource.data(), {"uid": row.attr("data-uid")});
+
+			for(var field in schema.model.fields) {
+				var obj = schema.model.fields[field];
+
+				if(!obj.validation) continue;
+
+				if(obj.validation.required && !rowData[field]) {
+					valid = false;
+				}
+			}
+
+			if(valid) {
+				scope.noGrid.saveRow(rowData);
+			} else {
+				throw "Row not valid";
+			}
+		}
+		this.validateAndSave = _validateAndSave;
+
+		function _getGridSchema(ctx, scope, el) {
+			var schema = scope.noGrid.dataSource.options.schema;
+
+			return schema;
+		}
+		this.getGridSchema = _getGridSchema;
 	}
 
 	function NoKendoInlineGridEditors($state, noLoginService, noKendoDataSourceFactory, noFormConfig) {
@@ -1528,6 +1575,64 @@ var noGeoMock;
 				// set its name to the field to which the column is bound ('name' in this case)
 				input.attr("name", options.field);
 
+				return input;
+			},
+			dropdown: function (scope, def, options) {
+				var input = $("<div style=\"position: relative\"><input /></div>"),
+					ctx = noFormConfig.getComponentContextByRoute($state.current.name, $state.params.entity, "noKendoGrid", "custom"),
+					dataSource;
+
+				ctx.component = {
+					noDataSource: {
+						"name": def.ListSource,
+						"dataProvider": "noIndexedDb",
+						"databaseName": "rmEFR2",
+						"entityName": def.ListSource,
+						"primaryKey": def.ValueField,
+						"sort": [{
+							"field": def.SortField
+						}],
+						"actions": {
+							"post": [
+								{
+									"provider": "noKendoHelpers",
+									"method": "addBlankOption",
+									"params": [
+										def
+									]
+								}
+							]
+						}
+					}
+				};
+
+				if(def.Filter){
+					ctx.component.noDataSource.filter = def.Filter;
+				}
+
+				dataSource = noKendoDataSourceFactory.create("kendoDropDownList", noLoginService.user.userId, ctx.component, scope);
+
+				dataSource.noInfoPath = def;
+
+				input.find("input").attr("name", options.field);
+
+				input.find("input").kendoDropDownList({
+					autobind: false,
+					dataTextField: def.TextField,
+					dataValueField: def.ValueField,
+					dataSource: dataSource,
+					template: def.Template ? def.Template : undefined,
+					optionLabel: def.OptionLabel ? def.OptionLabel : undefined,
+					change: function (e) {
+						var tr = e.sender.element.closest("TR"),
+							grid = e.sender.element.closest("[data-role='grid']").data("kendoGrid"),
+							data = grid.dataItem(tr);
+
+						data[def.SaveColumn || "Value"] = this.dataItem();
+					}
+				});
+
+				angular.element(input).children().first().addClass("full-width");
 				return input;
 			},
 			combobox: function (scope, def, options) {
@@ -1609,7 +1714,7 @@ var noGeoMock;
 					}
 					// If we have no value, return empty string.
 				} else {
-					value = ""
+					value = "";
 				}
 
 				return value;
@@ -1618,6 +1723,7 @@ var noGeoMock;
 		templateNameMap = {
 			"text": "text",
 			"combobox": "text",
+			"dropdown": "text",
 			"timepicker": "timepicker"
 		};
 
@@ -1655,7 +1761,7 @@ var noGeoMock;
 		};
 	}
 	angular.module("noinfopath.helpers")
-		.service("noKendoHelpers", ["$injector", "$compile", "$q", "$state", NoKendoHelpersService])
+		.service("noKendoHelpers", ["$injector", "$compile", "$q", "$state", "lodash", NoKendoHelpersService])
 		.service("noKendoInlineGridEditors", ["$state", "noLoginService", "noKendoDataSourceFactory", "noFormConfig", NoKendoInlineGridEditors]);
 })(angular);
 

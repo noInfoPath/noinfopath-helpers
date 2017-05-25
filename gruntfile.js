@@ -64,16 +64,6 @@ module.exports = function (grunt) {
 					start: ['/*', '/**'] // How the code block starts.
 				}
 			}
-		},
-		copy: {
-			dev: {
-				files: [{
-					expand: true,
-					flatten: true,
-					src: ['dist/noinfopath-helpers.js'],
-					dest: '/Users/gochinj/ws/rm/v4/root/lib/js/noinfopath/'
-                 }]
-			}
 		}
 	});
 
@@ -87,5 +77,5 @@ module.exports = function (grunt) {
 
 	//Default task(s).
 	grunt.registerTask('build', ['bumpup', 'version', 'concat:dist', 'nodocs', 'concat:readme']);
-	grunt.registerTask('compile', ['concat:dist', 'nodocs', 'concat:readme', 'copy:dev']);
+	grunt.registerTask('compile', ['concat:dist', 'nodocs', 'concat:readme']);
 };

@@ -1383,6 +1383,17 @@ var noGeoMock;
 		}
 		this.getGridRow = _getGridRow;
 
+		function _getGridRowData(el) {
+			var scope = $(el).scope();
+
+			if(scope) {
+				return scope.noGrid.dataItem(el);				
+			} else {
+				return;
+			}
+		}
+		this.getGridRowData = _getGridRowData;
+
 		/**
 		*	### @method getGridRowUID
 		*
@@ -1609,7 +1620,7 @@ var noGeoMock;
 					}
 					// If we have no value, return empty string.
 				} else {
-					value = ""
+					value = "";
 				}
 
 				return value;

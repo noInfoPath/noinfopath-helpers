@@ -5,7 +5,7 @@
  *
  *	> `Module Name: noinfopath.helpers`
  *
- *	> @version 2.0.30
+ *	> @version 2.0.32
  *
  *  ## Installation
  *      npm install noinfopath-helpers --save
@@ -1203,7 +1203,7 @@ var noGeoMock;
 	*	> NOTE: A future enhancements will be that it allows for multi-row selection,
 	*	> and cell slections.
 	*/
-	function NoKendoHelpersService($injector, $compile, $q, $state) {
+	function NoKendoHelpersService($injector, $compile, $q, $state, _) {
 		function _newRow(ctx, scope, el, gridName, navBarName) {
 			var grid = scope[gridName],
 				nonav,
@@ -1527,7 +1527,54 @@ var noGeoMock;
 		}
 		this.ngCompileSelectedRow = _ngCompileRow;
 
+		function _addBlankOption(ctx, scope, el, def) {
+			// ctx is the result set for the dropdown.
+			var blank = {},
+				emptyArray = [],
+				res;
 
+			// Need to mock a def record
+			blank[def.TextField] = "";
+			blank[def.SaveColumn] = null;
+			blank[def.ValueField] = null;
+			blank[def.SortField] = null;
+
+			emptyArray.push(blank);
+			res = new noInfoPath.data.NoResults(emptyArray.concat(ctx.paged));
+
+			return res;
+		}
+		this.addBlankOption = _addBlankOption;
+
+		function _validateAndSave(ctx, scope, el, row) {
+			var schema = _getGridSchema(ctx, scope, el),
+				valid = true,
+				rowData = _.find(scope.noGrid.dataSource.data(), {"uid": row.attr("data-uid")});
+
+			for(var field in schema.model.fields) {
+				var obj = schema.model.fields[field];
+
+				if(!obj.validation) continue;
+
+				if(obj.validation.required && !rowData[field]) {
+					valid = false;
+				}
+			}
+
+			if(valid) {
+				scope.noGrid.saveRow(rowData);
+			} else {
+				throw "Row not valid";
+			}
+		}
+		this.validateAndSave = _validateAndSave;
+
+		function _getGridSchema(ctx, scope, el) {
+			var schema = scope.noGrid.dataSource.options.schema;
+
+			return schema;
+		}
+		this.getGridSchema = _getGridSchema;
 	}
 
 	function NoKendoInlineGridEditors($state, noLoginService, noKendoDataSourceFactory, noFormConfig) {
@@ -1539,6 +1586,64 @@ var noGeoMock;
 				// set its name to the field to which the column is bound ('name' in this case)
 				input.attr("name", options.field);
 
+				return input;
+			},
+			dropdown: function (scope, def, options) {
+				var input = $("<div style=\"position: relative\"><input /></div>"),
+					ctx = noFormConfig.getComponentContextByRoute($state.current.name, $state.params.entity, "noKendoGrid", "custom"),
+					dataSource;
+
+				ctx.component = {
+					noDataSource: {
+						"name": def.ListSource,
+						"dataProvider": "noIndexedDb",
+						"databaseName": "rmEFR2",
+						"entityName": def.ListSource,
+						"primaryKey": def.ValueField,
+						"sort": [{
+							"field": def.SortField
+						}],
+						"actions": {
+							"post": [
+								{
+									"provider": "noKendoHelpers",
+									"method": "addBlankOption",
+									"params": [
+										def
+									]
+								}
+							]
+						}
+					}
+				};
+
+				if(def.Filter){
+					ctx.component.noDataSource.filter = def.Filter;
+				}
+
+				dataSource = noKendoDataSourceFactory.create("kendoDropDownList", noLoginService.user.userId, ctx.component, scope);
+
+				dataSource.noInfoPath = def;
+
+				input.find("input").attr("name", options.field);
+
+				input.find("input").kendoDropDownList({
+					autobind: false,
+					dataTextField: def.TextField,
+					dataValueField: def.ValueField,
+					dataSource: dataSource,
+					template: def.Template ? def.Template : undefined,
+					optionLabel: def.OptionLabel ? def.OptionLabel : undefined,
+					change: function (e) {
+						var tr = e.sender.element.closest("TR"),
+							grid = e.sender.element.closest("[data-role='grid']").data("kendoGrid"),
+							data = grid.dataItem(tr);
+
+						data[def.SaveColumn || "Value"] = this.dataItem();
+					}
+				});
+
+				angular.element(input).children().first().addClass("full-width");
 				return input;
 			},
 			combobox: function (scope, def, options) {
@@ -1629,6 +1734,7 @@ var noGeoMock;
 		templateNameMap = {
 			"text": "text",
 			"combobox": "text",
+			"dropdown": "text",
 			"timepicker": "timepicker"
 		};
 
@@ -1666,7 +1772,7 @@ var noGeoMock;
 		};
 	}
 	angular.module("noinfopath.helpers")
-		.service("noKendoHelpers", ["$injector", "$compile", "$q", "$state", NoKendoHelpersService])
+		.service("noKendoHelpers", ["$injector", "$compile", "$q", "$state", "lodash", NoKendoHelpersService])
 		.service("noKendoInlineGridEditors", ["$state", "noLoginService", "noKendoDataSourceFactory", "noFormConfig", NoKendoInlineGridEditors]);
 })(angular);
 
@@ -1675,102 +1781,158 @@ var noGeoMock;
 
 	function NoAddressParser() {
 		this.parseAddress = function(address){
-			var record = {},
-				parsedAddress = address.trim().split('\n');
+			try {
 
-			if(parsedAddress.length < 2){
-				var completedLines = 0;
+				var record = {},
+					parsedAddress = address.trim().split('\n'),
+					completedLines = 0;
 
-				parsedAddress = parsedAddress[0].trim().split(',');
-				commaParseCityStateZip();
-				commaParseAddress();
-				commaParseName();
+				if(parsedAddress.length < 2){
 
-				return record;
-			} else {
-				newLineParseCityStateZip();
-				newLineParseAddress();
-				newLineParseName();
+					parsedAddress = parsedAddress[0].trim().split(',');
 
-				return record;
-			}
+					if(parsedAddress.length < 2) {
+						return;
+					}
 
-			function newLineParseCityStateZip(){
-				var cityStateZip = parsedAddress[parsedAddress.length - 1].match(/([a-zA-Z]+\s*[a-zA-Z]{3,20})\s?,?\s?([a-zA-Z]{2})?\s?(\d{5}?)?/);
-				record.city = cityStateZip[1];
-				record.state = cityStateZip[2];
-				record.zip = cityStateZip[3];
-			}
-			function newLineParseAddress(){
-				var rawAddress = parsedAddress[parsedAddress.length - 2].split(',');
-
-				if (rawAddress.length == 1) {
-					record.address1 = rawAddress[0].trim();
-				} else {
-					record.address1 = rawAddress[0].trim();
-					record.address2 = rawAddress[1].trim();
-				}
-			}
-			function newLineParseName(){
-				var remainingLength = parsedAddress.length - 2;
-
-				if(remainingLength == 1){
-					record.name1 = parsedAddress[0].trim();
-				} else {
-					record.name1 = parsedAddress[0].trim();
-					record.name2 = parsedAddress[1].trim();
-				}
-			}
-
-			function commaParseCityStateZip(){
-				var stateZip = parsedAddress[parsedAddress.length - 1].trim().split(' ');
-				record.state = stateZip[0];
-				record.zip = stateZip[1];
-				record.city = parsedAddress[parsedAddress.length - 2].trim();
-
-				completedLines = completedLines + 2;
-			}
-			function commaParseAddress(){
-				for(var l = 1; l < parsedAddress.length - 2; l++){
-					var line = parsedAddress[l].trim();
-					if(!isNumber(line.substr(0,1))) continue;
-
-					var remaining = (parsedAddress.length - 2) - (l + 1);
-
-					// If there is any remaining, there is another line before we get to city/state/zip and need to put that line as address2
-					if(remaining == 0){
-						record.address1 = line;
-
-						completedLines = completedLines + 1;
+					if(isNumber(parsedAddress[0].trim().substr(0,1))){
+						commaParseCityStateZip();
+						commaParseAddress();
 					} else {
-						record.address1 = line;
-						record.address2 = parsedAddress[l + 1].trim();
-
-						completedLines = completedLines + 2;
+						commaParseCityStateZip();
+						commaParseAddress();
+						commaParseName();
 					}
-					break;
-				}
-			}
-			function commaParseName(){
-				var remainingLines = parsedAddress.length - completedLines;
-				if (remainingLines === 1){
-					record.name1 = parsedAddress[0].trim();
+
+					return record;
 				} else {
-					record.name1 = parsedAddress[0].trim();
-					// treat all remaining lines as name2, so join remaining lines together separated by ','
-					var name2Array = [];
-					for(var rem = 1; rem < remainingLines; rem++){
-						name2Array.push(parsedAddress[rem].trim());
+					if(isNumber(parsedAddress[0].trim())){
+						newLineParseCityStateZip();
+						newLineParseAddress();
+					} else {
+						newLineParseCityStateZip();
+						newLineParseAddress();
+						newLineParseName();
 					}
-					record.name2 = name2Array.join(", ");
-				}
-			}
 
-			function isNumber(i) {
-				return !Number.isNaN(Number(i)) && i !== null;
+					return record;
+				}
+
+				function newLineParseCityStateZip(){
+					var cityStateZip = parsedAddress[parsedAddress.length - 1].trim().split(',');
+
+					if(cityStateZip.length == 2){
+						record.city = cityStateZip[0];
+
+						var temp = cityStateZip[1].trim().split(' ');
+						record.state = temp[0].substr(0,2);
+						record.zip = temp[1];
+					} else {
+						record.city = cityStateZip[0].replace(',', '');
+						record.state = cityStateZip[1].substr(0,2);
+						record.zip = cityStateZip[2];
+					}
+				}
+				function newLineParseAddress(){
+					var rawAddress = parsedAddress[parsedAddress.length - 2].split(',');
+
+					if (rawAddress.length == 1) {
+						record.address1 = rawAddress[0].trim();
+					} else {
+						record.address1 = rawAddress[0].trim();
+						record.address2 = rawAddress[1].trim();
+					}
+				}
+				function newLineParseName(){
+					var remainingLength = parsedAddress.length - 2;
+
+					switch(remainingLength) {
+						case 0:
+							break;
+						case 1:
+							record.name1 = parsedAddress[0].trim();
+							break;
+						case 2:
+							record.name1 = parsedAddress[0].trim();
+							record.name2 = parsedAddress[1].trim();
+							break;
+						default:
+							break;
+					}
+				}
+
+				function commaParseCityStateZip(){
+					var stateZip = parsedAddress[parsedAddress.length - 1].trim().split(' ');
+
+					record.state = stateZip[0].substr(0,2);
+					record.zip = stateZip[1];
+					record.city = parsedAddress[parsedAddress.length - 2].trim();
+
+					completedLines = completedLines + 2;
+				}
+				function commaParseAddress(){
+					for(var l = 0; l <= parsedAddress.length - 2; l++){
+
+						var line = parsedAddress[l].trim();
+						if(!isNumber(line.substr(0,1))) continue;
+
+						var remaining = (parsedAddress.length - 2) - (l + 1);
+						// If there is any remaining, there is another line before we get to city/state/zip and need to put that line as address2
+						if(remaining === 0){
+							record.address1 = line;
+
+							completedLines = completedLines + 1;
+						} else {
+							record.address1 = line;
+							record.address2 = parsedAddress[l + 1].trim();
+
+							completedLines = completedLines + 2;
+						}
+						break;
+					}
+				}
+				function commaParseName(){
+					var remainingLines = parsedAddress.length - completedLines;
+
+					switch(remainingLines) {
+						case 0:
+							break;
+						case 1:
+							record.name1 = parsedAddress[0].trim();
+							break;
+						default:
+							record.name1 = parsedAddress[0].trim();
+							// treat all remaining lines as name2, so join remaining lines together separated by ','
+							var name2Array = [];
+							for(var rem = 1; rem < remainingLines; rem++){
+								name2Array.push(parsedAddress[rem].trim());
+							}
+							record.name2 = name2Array.join(", ");
+							break;
+					}
+
+					// if (remainingLines === 1){
+					// 	record.name1 = parsedAddress[0].trim();
+					// } else {
+					// 	record.name1 = parsedAddress[0].trim();
+					// 	// treat all remaining lines as name2, so join remaining lines together separated by ','
+					// 	var name2Array = [];
+					// 	for(var rem = 1; rem < remainingLines; rem++){
+					// 		name2Array.push(parsedAddress[rem].trim());
+					// 	}
+					// 	record.name2 = name2Array.join(", ");
+					// }
+				}
+
+				function isNumber(i) {
+					return !Number.isNaN(Number(i)) && i !== null;
+				}
+
+			} catch(err){
+				console.error(err);
 			}
 		};
-	};
+	}
 
 	angular.module("noinfopath.helpers")
 		.service("noAddressParser", [NoAddressParser])

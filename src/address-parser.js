@@ -15,6 +15,9 @@
 			if(typeof this.parsed === "object") {
 				this.formatted = _formatted(this.parsed);
 				this.score = _scoreRecord(this.parsed);
+			} else {
+				this.score = 0;
+				this.formatted = null;
 			}
 		}
 
@@ -24,7 +27,7 @@
 			scoreboard.forEach(function(element, index, array){
 				if(record.hasOwnProperty(element)) score++;
 			});
-			return score / scoreboard.length;
+			return (score / scoreboard.length) * 100;
 		}
 
 		var formatOrder = ["name1", "name2", "address1", "address2", "city", "state", "zip"];

@@ -2,15 +2,58 @@
 	"use strict";
 
 	function NoAddressParser() {
-		this.parseAddress = function(address){
-			try {
+		// Helper Function
+		function isNumber(i) {
+			return !Number.isNaN(Number(i)) && i !== null;
+		}
 
+		// NoAddress Class
+		function NoAddress(input) {
+			this.__type = "NoAddress";
+			this._raw = input;
+			this.parsed = _parseAddress(input);
+			if(typeof this.parsed === "object") {
+				this.formatted = _formatted(this.parsed);
+				this.score = _scoreRecord(this.parsed);
+			}
+		}
+
+		var scoreboard = ["name1", "address1", "city", "state", "zip"];
+		function _scoreRecord(record){
+			var score = 0;
+			scoreboard.forEach(function(element, index, array){
+				if(record.hasOwnProperty(element)) score++;
+			});
+			return score / scoreboard.length;
+		}
+
+		var formatOrder = ["name1", "name2", "address1", "address2", "city", "state", "zip"];
+		function _formatted(record){
+			var rs = "",
+				recordLength = Object.getOwnPropertyNames(record).length,
+				tracker = 0;
+
+			formatOrder.forEach(function(element, index, array){
+				if(record[element]) {
+					rs = rs + record[element];
+					tracker++;
+					if(tracker < recordLength){
+						rs = rs + ",";
+					}
+				}
+			});
+
+			return rs;
+		}
+
+		// Parse Address
+		function _parseAddress(address){
+			try {
 				var record = {},
 					parsedAddress = address.trim().split('\n'),
 					completedLines = 0;
 
 				if(parsedAddress.length < 2){
-
 					parsedAddress = parsedAddress[0].trim().split(',');
 
 					if(parsedAddress.length < 2) {
@@ -82,7 +125,6 @@
 							break;
 					}
 				}
-
 				function commaParseCityStateZip(){
 					var stateZip = parsedAddress[parsedAddress.length - 1].trim().split(' ');
 
@@ -132,27 +174,14 @@
 							record.name2 = name2Array.join(", ");
 							break;
 					}
-
-					// if (remainingLines === 1){
-					// 	record.name1 = parsedAddress[0].trim();
-					// } else {
-					// 	record.name1 = parsedAddress[0].trim();
-					// 	// treat all remaining lines as name2, so join remaining lines together separated by ','
-					// 	var name2Array = [];
-					// 	for(var rem = 1; rem < remainingLines; rem++){
-					// 		name2Array.push(parsedAddress[rem].trim());
-					// 	}
-					// 	record.name2 = name2Array.join(", ");
-					// }
 				}
-
-				function isNumber(i) {
-					return !Number.isNaN(Number(i)) && i !== null;
-				}
-
-			} catch(err){
-				console.error(err);
+			} catch(err) {
+				return err;
 			}
+		}
+
+		this.parseAddress = function(address){
+			return new NoAddress(address);
 		};
 	}
 

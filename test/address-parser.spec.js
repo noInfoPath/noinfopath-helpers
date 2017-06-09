@@ -220,6 +220,16 @@ var tests = [
 describe("Testing address parser", function(){
 	var parseAddressService;
 
+	function test(d){
+		var test = tests[d],
+			raw = test.raw,
+			expected = test.expected,
+			actual = parseAddressService.parseAddress(raw);
+
+		expect(actual.__type).toEqual("NoAddress");
+		expect(actual.parsed).toEqual(expected);
+	}
+
 	beforeEach(function(){
 		module("noinfopath.helpers");
 
@@ -229,13 +239,6 @@ describe("Testing address parser", function(){
 	});
 
 	for(var d = 0; d < tests.length; d++){
-		it("Testing address " + d, function(d){
-			var test = tests[d],
-				raw = test.raw,
-				expected = test.expected,
-				actual = parseAddressService.parseAddress(raw);
-
-			expect(actual).toEqual(expected);
-		}.bind(this, d))
+		it("Testing address " + d, test.bind(this, d));
 	}
 });

@@ -370,10 +370,14 @@
 				}
 			}
 
+			var tr = el.closest("tr");
 			if(valid) {
+				tr.removeClass("tr-has-error");
 				scope.noGrid.saveRow(rowData);
 			} else {
-				throw "Row not valid";
+				tr.addClass("tr-has-error");
+				console.log(tr);
+				console.error("Row not valid");
 			}
 		}
 		this.validateAndSave = _validateAndSave;
@@ -394,6 +398,7 @@
 
 				// set its name to the field to which the column is bound ('name' in this case)
 				input.attr("name", options.field);
+				input.attr("maxlength", options.maxlength || 255);
 
 				return input;
 			},
